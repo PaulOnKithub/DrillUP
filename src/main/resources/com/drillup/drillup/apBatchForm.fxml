@@ -4,10 +4,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Rectangle?>
 
-<Pane fx:id="apMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="365.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.ApController">
+<Pane fx:id="apMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="404.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.ApController">
    <children>
       <TextField fx:id="apBatch" layoutX="180.0" layoutY="61.0" prefHeight="38.0" prefWidth="149.0" styleClass="button" />
       <TextField fx:id="apEntry" layoutX="180.0" layoutY="100.0" prefHeight="38.0" prefWidth="149.0" styleClass="button" />
@@ -24,5 +27,17 @@
       <Label layoutX="38.0" layoutY="329.0" prefHeight="38.0" prefWidth="117.0" styleClass="button" text="GL Entry :" />
       <Label fx:id="glEntry" layoutX="180.0" layoutY="329.0" prefHeight="38.0" prefWidth="149.0" styleClass="button" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="105.0" layoutX="33.0" layoutY="276.0" stroke="DODGERBLUE" strokeType="INSIDE" width="302.0" />
+      <Button layoutX="334.0" layoutY="60.0" mnemonicParsing="false" onAction="#apSearch" prefHeight="38.0" prefWidth="59.0">
+         <graphic>
+            <ImageView fitHeight="19.0" fitWidth="23.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@search.png" />
+               </image>
+               <effect>
+                  <Blend />
+               </effect>
+            </ImageView>
+         </graphic>
+      </Button>
    </children>
 </Pane>

@@ -10,6 +10,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class ApController {
 
     @FXML
@@ -41,6 +43,24 @@ public class ApController {
             stage.setScene(new Scene(fxmlLoader.load()));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+    }
+    @FXML
+    void apSearch(ActionEvent event) {
+        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("arBatchForm.fxml"));
+        Stage searchStage = new Stage();
+        try {
+            Scene searchScene = new Scene(fxmlLoader.load());
+            searchStage.setScene(searchScene);
+            searchStage.alwaysOnTopProperty();
+            searchStage.initOwner(apMainPane.getScene().getWindow());
+            searchStage.show();
+        }
+        catch (IOException e) {
+            System.err.println("Error loading file"+e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error loading file"+e.getMessage());
         }
 
     }
