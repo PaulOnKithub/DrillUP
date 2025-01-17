@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -48,14 +49,16 @@ public class ApController {
     }
     @FXML
     void apSearch(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("arBatchForm.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("searchForm.fxml"));
         Stage searchStage = new Stage();
         try {
             Scene searchScene = new Scene(fxmlLoader.load());
             searchStage.setScene(searchScene);
             searchStage.alwaysOnTopProperty();
             searchStage.initOwner(apMainPane.getScene().getWindow());
-            searchStage.show();
+            searchStage.setResizable(false);
+            searchStage.initModality(Modality.APPLICATION_MODAL);
+            searchStage.showAndWait();
         }
         catch (IOException e) {
             System.err.println("Error loading file"+e.getMessage());
