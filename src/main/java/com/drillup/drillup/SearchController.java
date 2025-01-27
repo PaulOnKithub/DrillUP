@@ -29,6 +29,12 @@ public class SearchController {
     @FXML
     private TextField searchParam3;
 
+    Database db;
+
+    public void setDb(Database db) {
+        this.db = db;
+    }
+
     @FXML
     void exitSearch(ActionEvent event) {
 

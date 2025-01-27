@@ -10,6 +10,7 @@ module com.drillup.drillup {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.sql;
+    requires com.microsoft.sqlserver.jdbc;
 
     opens com.drillup.drillup to javafx.fxml;
     exports com.drillup.drillup;

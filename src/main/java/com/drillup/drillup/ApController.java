@@ -36,6 +36,12 @@ public class ApController {
     @FXML
     private ProgressBar progressBar;
 
+    Database db;
+
+    public void setDb(Database db) {
+        this.db = db;
+    }
+
     @FXML
     void backToMainUI(ActionEvent event) {
         FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("drillUp.fxml"));
