@@ -95,13 +95,11 @@ public class MainController {
         alert.setTitle("Exit Confirmation");
         alert.setHeaderText(null);
         alert.setContentText("Are you sure you want to exit?");
-        alert.showAndWait();
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
-            // ... user chose OK
+        if (result.get() == ButtonType.OK) {
+            // ... user chose
+            db.closeConnection();
             Platform.exit();
-        } else {
-            // ... user chose CANCEL or closed the dialog
         }
     }
 
@@ -231,12 +229,10 @@ public class MainController {
     @FXML
     void initialize() {
         db = new Database();
-
+        db.connectToDatabase();
         if (!db.isConnected()) {
             drillUpSettings(null);
-        }
-
-        //show dialog box where user will specify the server name, database name, username and password
+        }        //show dialog box where user will specify the server name, database name, username and password
 
     }
 }
