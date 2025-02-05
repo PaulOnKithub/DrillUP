@@ -1,5 +1,6 @@
 package com.drillup.drillup;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.IOException;
 
@@ -48,12 +50,12 @@ public class ApController {
 
     public String buildDrillDownLink(String batch, String entry, String sequence) {
       if (batch.isEmpty() || entry.isEmpty() || sequence.isEmpty()) {
-        return "";
+        return "000000";
       } else {
-        var BatchLength = batch.length();
-        var sequenceLength = sequence.length();
-        var entryLength = entry.length();
-        var totalLength = BatchLength + sequenceLength + entryLength;
+        int BatchLength = batch.length();
+        int sequenceLength = sequence.length();
+        int entryLength = entry.length();
+        int totalLength = BatchLength + sequenceLength + entryLength;
         if(totalLength<=16){
           //build a 18 character string
             //first character is the sequencelenght
@@ -74,7 +76,7 @@ public class ApController {
             drillDownLink.append(entry);
             return drillDownLink.toString();
         } else {
-          return "";
+          return "111111";
         }
       }
 
@@ -130,14 +132,57 @@ public class ApController {
         String entry=apEntry.getText().trim();
         String sequence=apSequence.getText().trim();
         String drillDownLink=buildDrillDownLink(batch,entry,sequence);
-        int drillDownNumber=Integer.getInteger(drillDownLink);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Drill Up Link");
-        alert.setHeaderText("Drill Up Link");
-        alert.setContentText(drillDownLink);
+        if (drillDownLink.isEmpty()) {
+            return;
+        } else {
+            System.out.println(drillDownLink);
+            Task<Pair<Integer,Integer>> task = new Task<Pair<Integer,Integer>>() {
+                @Override
+                protected Pair<Integer,Integer> call() throws Exception {
+                    return db.retrieveGLInfo(sourceLedger,Long.parseLong(drillDownLink));
+                }
+            };
+
+            task.setOnSucceeded(e -> {
+                Pair<Integer,Integer> glInfo = task.getValue();
+                if (glInfo.getKey()==0) {
+                    return;
+                } else {
+                    glBatch.setText(glInfo.getKey().toString());
+                    glEntry.setText(glInfo.getValue().toString());
+                }
+                progressBar.setProgress(0);
+                resetButton.setDisable(false);
+                retrieveButton.setDisable(false);
+            });
+
+            task.setOnRunning(e -> {
+                progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+                resetButton.setDisable(true);
+                retrieveButton.setDisable(true);
+            });
+
+            task.setOnFailed(e -> {
+                progressBar.setProgress(0);
+                System.out.println(task.getException().getMessage());
+                resetButton.setDisable(false);
+                retrieveButton.setDisable(false);
+            });
+
+            Thread thread = new Thread(task);
+            thread.start();
+
+            //terminate thread
+            //handle case when query returns nothing
+
+        }
 
 
     }
+
+
+
+}
 
     @FXML
     void initialize() {

@@ -16,8 +16,8 @@
       <Label layoutX="33.0" layoutY="99.0" prefHeight="38.0" prefWidth="111.0" styleClass="button" text="AR Entry :" />
       <Label layoutX="33.0" layoutY="139.0" prefHeight="38.0" prefWidth="142.0" styleClass="button" text="AR Posting Sequence :" />
       <ProgressBar fx:id="progressBar" layoutX="33.0" layoutY="186.0" prefHeight="31.0" prefWidth="296.0" progress="0.0" />
-      <Button layoutX="230.0" layoutY="230.0" mnemonicParsing="false" onAction="#retrieveFromAR" prefHeight="40.0" prefWidth="99.0" text="Retrieve" />
-      <Button layoutX="33.0" layoutY="230.0" mnemonicParsing="false" onAction="#resetAR" prefHeight="40.0" prefWidth="76.0" text="Reset" />
+      <Button fx:id="retrieveButton" layoutX="230.0" layoutY="230.0" mnemonicParsing="false" onAction="#retrieveFromAR" prefHeight="40.0" prefWidth="99.0" text="Retrieve" />
+      <Button fx:id="resetButton" layoutX="33.0" layoutY="230.0" mnemonicParsing="false" onAction="#resetAR" prefHeight="40.0" prefWidth="76.0" text="Reset" />
       <Button layoutX="244.0" layoutY="17.0" mnemonicParsing="false" onAction="#backToMainUI" prefHeight="38.0" prefWidth="85.0" text="Back" />
       <Label layoutX="43.0" layoutY="288.0" prefHeight="38.0" prefWidth="111.0" styleClass="button" text="GL Batch : " />
       <Label fx:id="glBatch" layoutX="167.0" layoutY="288.0" prefHeight="31.0" prefWidth="127.0" styleClass="button" />

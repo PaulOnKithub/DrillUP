@@ -49,10 +49,11 @@ public class MainController {
         FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("arBatchForm.fxml"));
         Stage stage=(Stage) mainPane.getScene().getWindow();
         stage.setResizable(false);
-        ArController arController = fxmlLoader.getController();
-        arController.setDb(db);
         try {
             stage.setScene(new Scene(fxmlLoader.load()));
+            ArController arController = fxmlLoader.getController();
+            arController.setDb(db);
+            stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }

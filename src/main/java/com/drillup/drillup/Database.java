@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
+import javafx.util.Pair;
 
 public class Database {
 
@@ -66,6 +67,26 @@ public class Database {
             System.out.println(e.getMessage());
         }
 
+    }
+
+    public  Pair<Integer,Integer> retrieveGLInfo(String sourceLedger, Long drillDownLink){
+        Pair<Integer,Integer> glInfo = new Pair<>(0,0);
+        if(isConnected) {
+
+            try {
+                String sql = "SELECT BATCHID, BTCHENTRY FROM GLJEH WHERE SRCELEDGER= ? AND DRILLDWNLK = ?";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, sourceLedger);
+                stmt.setLong(2, drillDownLink);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    glInfo = new Pair<>(rs.getInt("BATCHID"), rs.getInt("BTCHENTRY"));
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return glInfo;
     }
 
 }
