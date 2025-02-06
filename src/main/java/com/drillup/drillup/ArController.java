@@ -92,6 +92,11 @@ public class ArController {
 
     @FXML
     void resetAR(ActionEvent event) {
+        arBatch.clear();
+        arEntry.clear();
+        arSequence.clear();
+        glBatch.setText("");
+        glEntry.setText("");
 
     }
 
