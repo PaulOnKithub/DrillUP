@@ -28,6 +28,23 @@ public class MainController {
     Database db;
 
 
+    void showNotification(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+
     @FXML
     void apScreen(ActionEvent event) {
         FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("apBatchForm.fxml"));
@@ -38,7 +55,7 @@ public class MainController {
             ApController apController = fxmlLoader.getController();
             apController.setDb(db);
         } catch (Exception e) {
-            e.printStackTrace();
+            showError("Error loading AP screen" + e.getMessage());
         }
 
 
@@ -55,7 +72,7 @@ public class MainController {
             arController.setDb(db);
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+           showError("Error loading AR screen" + e.getMessage());
         }
 
     }
@@ -65,12 +82,12 @@ public class MainController {
         FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("shippingBatchForm.fxml"));
         Stage stage=(Stage) mainPane.getScene().getWindow();
         stage.setResizable(false);
-        ShippingController shippingController = fxmlLoader.getController();
-        shippingController.setDb(db);
         try {
             stage.setScene(new Scene(fxmlLoader.load()));
+            ShippingController shippingController = fxmlLoader.getController();
+            shippingController.setDb(db);
         } catch (Exception e) {
-            e.printStackTrace();
+           showError("Error loading shipping screen" + e.getMessage());
         }
 
     }
@@ -80,12 +97,13 @@ public class MainController {
         FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("grnBatchForm.fxml"));
         Stage stage=(Stage) mainPane.getScene().getWindow();
         stage.setResizable(false);
-        GrnController grnController = fxmlLoader.getController();
-        grnController.setDb(db);
+
         try {
             stage.setScene(new Scene(fxmlLoader.load()));
+            GrnController grnController = fxmlLoader.getController();
+            grnController.setDb(db);
         } catch (Exception e) {
-            e.printStackTrace();
+            showError("Error loading GRN screen" + e.getMessage());
         }
 
     }

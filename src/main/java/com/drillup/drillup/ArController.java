@@ -5,16 +5,17 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
-public class ArController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class ArController implements Initializable {
 
     @FXML
     private Pane arMainPane;
@@ -43,9 +44,27 @@ public class ArController {
     @FXML
     private Button retrieveButton;
 
+    Thread thread;
+
     Database db;
 
     private final String sourceLedger="AR";
+
+    void showNotification(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
     public void setDb(Database db) {
         this.db = db;
@@ -80,12 +99,18 @@ public class ArController {
 
     @FXML
     void backToMainUI(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("drillUp.fxml"));
-        Stage stage=(Stage) arMainPane.getScene().getWindow();
-        try {
-            stage.setScene(new Scene(fxmlLoader.load()));
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (thread!=null) {
+            thread.interrupt();
+        }
+
+        if(thread==null || !thread.isAlive() ) {
+            FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("drillUp.fxml"));
+            Stage stage = (Stage) arMainPane.getScene().getWindow();
+            try {
+                stage.setScene(new Scene(fxmlLoader.load()));
+            } catch (Exception e) {
+                showError("Error loading main screen" + e.getMessage());
+            }
         }
 
     }
@@ -97,6 +122,7 @@ public class ArController {
         arSequence.clear();
         glBatch.setText("");
         glEntry.setText("");
+
 
     }
 
@@ -124,14 +150,18 @@ public class ArController {
                 task.setOnSucceeded(e -> {
                     Pair<Integer,Integer> glInfo = task.getValue();
                     if (glInfo.getKey()==0) {
+                        showNotification("No data found");
+                        resetButton.setDisable(false);
+                        retrieveButton.setDisable(false);
+                        progressBar.setProgress(0);
                         return;
                     } else {
                         glBatch.setText(glInfo.getKey().toString());
                         glEntry.setText(glInfo.getValue().toString());
+                        resetButton.setDisable(false);
+                        retrieveButton.setDisable(false);
+                        progressBar.setProgress(0);
                     }
-                    progressBar.setProgress(0);
-                    resetButton.setDisable(false);
-                    retrieveButton.setDisable(false);
                 });
 
                 task.setOnRunning(e -> {
@@ -141,15 +171,13 @@ public class ArController {
                 });
 
                 task.setOnFailed(e -> {
+                    showError(task.getException().getMessage());
                     progressBar.setProgress(0);
-                    System.out.println(task.getException().getMessage());
                     resetButton.setDisable(false);
                     retrieveButton.setDisable(false);
                 });
-
-                Thread thread = new Thread(task);
+                thread = new Thread(task);
                 thread.start();
-
             }
 
 
@@ -157,10 +185,9 @@ public class ArController {
 
     }
 
-    @FXML
-    void initialize() {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
 
     }
-
 }
 

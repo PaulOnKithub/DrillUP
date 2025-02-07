@@ -4,6 +4,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
@@ -12,8 +13,10 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class ApController {
+public class ApController implements Initializable {
 
     @FXML
     private Pane apMainPane;
@@ -42,10 +45,28 @@ public class ApController {
     @FXML
     private Button retrieveButton;
 
+    private Thread thread;
+
 
     Database db;
 
     private final String sourceLedger="AP";
+
+    void showNotification(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
     public void setDb(Database db) {
         this.db = db;
@@ -60,13 +81,7 @@ public class ApController {
         int entryLength = entry.length();
         int totalLength = BatchLength + sequenceLength + entryLength;
         if(totalLength<=16){
-          //build a 18 character string
-            //first character is the sequencelenght
-            //second charcter the batch length
-            //from the third charcter upto the lenght of the sequence is the sequence
-            //from the length of the sequence to the length of the batch is the batch
-            //from the batch number up the entry number are leading zeros
-            //from the entry number up to the end of the string is the entry number
+
             StringBuilder drillDownLink = new StringBuilder();
             drillDownLink.append(sequenceLength);
             drillDownLink.append(BatchLength);
@@ -87,35 +102,25 @@ public class ApController {
 
     @FXML
     void backToMainUI(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("drillUp.fxml"));
-        Stage stage=(Stage) apMainPane.getScene().getWindow();
-        try {
-            stage.setScene(new Scene(fxmlLoader.load()));
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if (thread != null) {
+            thread.interrupt();
         }
 
-    }
-    @FXML
-    void apSearch(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("searchForm.fxml"));
-        Stage searchStage = new Stage();
-        try {
-            Scene searchScene = new Scene(fxmlLoader.load());
-            searchStage.setScene(searchScene);
-            searchStage.alwaysOnTopProperty();
-            searchStage.initOwner(apMainPane.getScene().getWindow());
-            searchStage.setResizable(false);
-            searchStage.initModality(Modality.APPLICATION_MODAL);
-            searchStage.showAndWait();
-        }
-        catch (IOException e) {
-            System.err.println("Error loading file"+e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Error loading file"+e.getMessage());
+        //if thread is not alive, load the main screen
+        if (thread==null || !thread.isAlive()) {
+            FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("drillUp.fxml"));
+            Stage stage = (Stage) apMainPane.getScene().getWindow();
+            try {
+                stage.setScene(new Scene(fxmlLoader.load()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
+
     }
+
 
     @FXML
     void resetAP(ActionEvent event) {
@@ -149,6 +154,10 @@ public class ApController {
             task.setOnSucceeded(e -> {
                 Pair<Integer,Integer> glInfo = task.getValue();
                 if (glInfo.getKey()==0) {
+                    showNotification("No data found");
+                    resetButton.setDisable(false);
+                    retrieveButton.setDisable(false);
+                    progressBar.setProgress(0);
                     return;
                 } else {
                     glBatch.setText(glInfo.getKey().toString());
@@ -167,26 +176,30 @@ public class ApController {
 
             task.setOnFailed(e -> {
                 progressBar.setProgress(0);
-                System.out.println(task.getException().getMessage());
+                showError(task.getException().getMessage());
                 resetButton.setDisable(false);
                 retrieveButton.setDisable(false);
             });
 
-            Thread thread = new Thread(task);
+            thread = new Thread(task);
             thread.start();
-
-            //terminate thread
-            //handle case when query returns nothing
 
         }
 
 
     }
 
-    @FXML
-    void initialize() {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
 
     }
+
+    //terminate thread
+    //handle case when query returns nothing
+
+
+
 
 
 

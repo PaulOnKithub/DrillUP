@@ -81,7 +81,10 @@ public class Database {
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     glInfo = new Pair<>(rs.getInt("BATCHID"), rs.getInt("BTCHENTRY"));
+                }else {
+                    glInfo = new Pair<>(0,0);
                 }
+
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
