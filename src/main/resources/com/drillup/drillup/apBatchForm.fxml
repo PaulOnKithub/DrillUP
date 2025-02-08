@@ -4,13 +4,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.Blend?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Rectangle?>
 
-<Pane fx:id="apMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="404.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.ApController">
+<Pane fx:id="apMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="369.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.ApController">
    <children>
       <TextField fx:id="apBatch" layoutX="180.0" layoutY="61.0" prefHeight="38.0" prefWidth="149.0" styleClass="button" />
       <TextField fx:id="apEntry" layoutX="180.0" layoutY="100.0" prefHeight="38.0" prefWidth="149.0" styleClass="button" />
@@ -19,25 +16,13 @@
       <Label layoutX="33.0" layoutY="99.0" prefHeight="38.0" prefWidth="138.0" styleClass="button" text="AP Entry :" />
       <Label layoutX="33.0" layoutY="139.0" prefHeight="38.0" prefWidth="138.0" styleClass="button" text="AP Posting Sequence :" />
       <ProgressBar fx:id="progressBar" layoutX="33.0" layoutY="186.0" prefHeight="31.0" prefWidth="296.0" progress="0.0" />
-      <Button layoutX="228.0" layoutY="230.0" mnemonicParsing="false" onAction="#retrieveFromAP" prefHeight="40.0" prefWidth="101.0" text="Retrieve" />
-      <Button layoutX="33.0" layoutY="230.0" mnemonicParsing="false" onAction="#resetAP" prefHeight="40.0" prefWidth="76.0" text="Reset" />
+      <Button fx:id="retrieveButton" layoutX="228.0" layoutY="230.0" mnemonicParsing="false" onAction="#retrieveFromAP" prefHeight="40.0" prefWidth="101.0" text="Retrieve" />
+      <Button fx:id="resetButton" layoutX="32.0" layoutY="230.0" mnemonicParsing="false" onAction="#resetAP" prefHeight="40.0" prefWidth="76.0" text="Reset" />
       <Button layoutX="243.0" layoutY="17.0" mnemonicParsing="false" onAction="#backToMainUI" prefHeight="38.0" prefWidth="86.0" text="Back" />
       <Label layoutX="38.0" layoutY="288.0" prefHeight="38.0" prefWidth="117.0" styleClass="button" text="GL Batch : " />
       <Label fx:id="glBatch" layoutX="180.0" layoutY="288.0" prefHeight="38.0" prefWidth="149.0" styleClass="button" />
       <Label layoutX="38.0" layoutY="329.0" prefHeight="38.0" prefWidth="117.0" styleClass="button" text="GL Entry :" />
       <Label fx:id="glEntry" layoutX="180.0" layoutY="329.0" prefHeight="38.0" prefWidth="149.0" styleClass="button" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="105.0" layoutX="33.0" layoutY="276.0" stroke="DODGERBLUE" strokeType="INSIDE" width="302.0" />
-      <Button layoutX="334.0" layoutY="60.0" mnemonicParsing="false" onAction="#apSearch" prefHeight="38.0" prefWidth="59.0">
-         <graphic>
-            <ImageView fitHeight="19.0" fitWidth="23.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@search.png" />
-               </image>
-               <effect>
-                  <Blend />
-               </effect>
-            </ImageView>
-         </graphic>
-      </Button>
    </children>
 </Pane>

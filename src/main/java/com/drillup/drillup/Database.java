@@ -3,6 +3,7 @@ package com.drillup.drillup;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -81,12 +82,49 @@ public class Database {
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     glInfo = new Pair<>(rs.getInt("BATCHID"), rs.getInt("BTCHENTRY"));
+                }else {
+                    glInfo = new Pair<>(0,0);
                 }
+
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
         }
         return glInfo;
+    }
+
+    public ArrayList<OperationsModuleRecord> getOpeartionsModulesrecords (String sourceLedger) throws SQLException {
+        ArrayList<OperationsModuleRecord> operationsModuleRecords = new ArrayList<>();
+        String sql="";
+        if(isConnected) {
+            try {
+                if (sourceLedger == "OE") {
+                    sql = "SELECT * FROM OESHIH";
+                }else if(sourceLedger == "PO") {
+                    sql = "SELECT * FROM PORCPH1";
+                }
+
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    OperationsModuleRecord operationsModuleRecord;
+                    if (sourceLedger == "OE") {
+
+                        operationsModuleRecord = new OperationsModuleRecord(rs.getString("SHINUMBER"), rs.getString("BILNAME"),rs.getFloat("SHINETWTX"));
+                        operationsModuleRecords.add(operationsModuleRecord);
+                    } else if (sourceLedger == "PO") {
+                        operationsModuleRecord = new OperationsModuleRecord(rs.getString("RCPNUMBER"), rs.getString("VDNAME"),rs.getFloat("DOCTOTAL"));
+                        operationsModuleRecords.add(operationsModuleRecord);
+                    }
+
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw e;
+            }
+        }
+        return operationsModuleRecords;
+
     }
 
 }

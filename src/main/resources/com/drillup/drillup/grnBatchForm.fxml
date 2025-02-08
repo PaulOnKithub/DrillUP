@@ -4,10 +4,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Rectangle?>
 
-<Pane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="318.0" prefWidth="365.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.GrnController">
+<Pane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="318.0" prefWidth="405.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.GrnController">
    <children>
       <TextField fx:id="grnNo" layoutX="180.0" layoutY="62.0" prefHeight="38.0" prefWidth="149.0" styleClass="button" />
       <Label layoutX="33.0" layoutY="59.0" prefHeight="38.0" prefWidth="127.0" styleClass="button" text="GRN No :" />
@@ -15,10 +18,22 @@
       <Button layoutX="235.0" layoutY="146.0" mnemonicParsing="false" onAction="#retrieveFromGRN" prefHeight="40.0" prefWidth="94.0" text="Retrieve" />
       <Button layoutX="33.0" layoutY="146.0" mnemonicParsing="false" onAction="#resetGRN" prefHeight="40.0" prefWidth="76.0" text="Reset" />
       <Button layoutX="242.0" layoutY="17.0" mnemonicParsing="false" onAction="#backToMainUI" prefHeight="38.0" prefWidth="87.0" text="Back" />
-      <Label layoutX="43.0" layoutY="210.0" prefHeight="38.0" prefWidth="106.0" styleClass="button" text="GL Batch : " />
-      <Label fx:id="glBatch" layoutX="172.0" layoutY="210.0" prefHeight="31.0" prefWidth="127.0" styleClass="button" />
-      <Label layoutX="42.0" layoutY="251.0" prefHeight="38.0" prefWidth="106.0" styleClass="button" text="GL Entry :" />
-      <Label fx:id="glEntry" layoutX="172.0" layoutY="251.0" prefHeight="31.0" prefWidth="127.0" styleClass="button" />
+      <Label layoutX="53.0" layoutY="210.0" prefHeight="38.0" prefWidth="106.0" styleClass="button" text="GL Batch : " />
+      <Label fx:id="glBatch" layoutX="182.0" layoutY="210.0" prefHeight="31.0" prefWidth="127.0" styleClass="button" />
+      <Label layoutX="52.0" layoutY="251.0" prefHeight="38.0" prefWidth="106.0" styleClass="button" text="GL Entry :" />
+      <Label fx:id="glEntry" layoutX="182.0" layoutY="251.0" prefHeight="31.0" prefWidth="127.0" styleClass="button" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="95.0" layoutX="32.0" layoutY="204.0" stroke="DODGERBLUE" strokeType="INSIDE" width="302.0" />
+      <Button fx:id="searchButton" layoutX="334.0" layoutY="62.0" mnemonicParsing="false" onAction="#searchScreen" prefHeight="38.0" prefWidth="59.0">
+         <graphic>
+            <ImageView fitHeight="19.0" fitWidth="23.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@search.png" />
+               </image>
+               <effect>
+                  <Blend />
+               </effect>
+            </ImageView>
+         </graphic>
+      </Button>
    </children>
 </Pane>
