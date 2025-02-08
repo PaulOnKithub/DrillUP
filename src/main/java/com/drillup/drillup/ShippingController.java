@@ -53,7 +53,6 @@ public class ShippingController {
 
     @FXML
     void searchScreen(ActionEvent event) {
-        searchButton.setDisable(true);
         FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("searchForm.fxml"));
         Stage searchStage = new Stage();
         searchStage.initOwner(mainPane.getScene().getWindow());
@@ -67,9 +66,7 @@ public class ShippingController {
             SearchController searchController = fxmlLoader.getController();
             searchController.setParams("OE","Document No","Customer",db);
             searchStage.showAndWait();
-            while(!searchStage.isShowing()) {
-
-                searchButton.setDisable(false);
+            if(!searchStage.isShowing()) {
                 showNotification(searchController.getResult());
             }
         }

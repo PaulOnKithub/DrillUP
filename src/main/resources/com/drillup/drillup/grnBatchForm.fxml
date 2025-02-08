@@ -23,7 +23,7 @@
       <Label layoutX="52.0" layoutY="251.0" prefHeight="38.0" prefWidth="106.0" styleClass="button" text="GL Entry :" />
       <Label fx:id="glEntry" layoutX="182.0" layoutY="251.0" prefHeight="31.0" prefWidth="127.0" styleClass="button" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="95.0" layoutX="32.0" layoutY="204.0" stroke="DODGERBLUE" strokeType="INSIDE" width="302.0" />
-      <Button layoutX="334.0" layoutY="62.0" mnemonicParsing="false" onAction="#searchScreen" prefHeight="38.0" prefWidth="59.0">
+      <Button fx:id="searchButton" layoutX="334.0" layoutY="62.0" mnemonicParsing="false" onAction="#searchScreen" prefHeight="38.0" prefWidth="59.0">
          <graphic>
             <ImageView fitHeight="19.0" fitWidth="23.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                <image>

@@ -4,10 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -24,6 +21,9 @@ public class GrnController {
 
     @FXML
     private TextField grnNo;
+
+    @FXML
+    private Button searchButton;
 
     @FXML
     private Pane mainPane;
@@ -70,6 +70,9 @@ public class GrnController {
             SearchController searchController = fxmlLoader.getController();
             searchController.setParams("PO","Document No","Vendor",db);
             searchStage.showAndWait();
+            if(!searchStage.isShowing()) {
+                showNotification(searchController.getResult());
+            }
         }
         catch (IOException e) {
             e.printStackTrace();
