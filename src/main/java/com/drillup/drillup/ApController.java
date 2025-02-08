@@ -101,10 +101,11 @@ public class ApController implements Initializable {
     }
 
     @FXML
-    void backToMainUI(ActionEvent event) {
+    void backToMainUI(ActionEvent event)  {
 
         if (thread != null) {
             thread.interrupt();
+
         }
 
         //if thread is not alive, load the main screen
@@ -114,7 +115,7 @@ public class ApController implements Initializable {
             try {
                 stage.setScene(new Scene(fxmlLoader.load()));
             } catch (Exception e) {
-                e.printStackTrace();
+                showError("Error loading main screen :" + e.getMessage());
             }
         }
 
@@ -195,8 +196,6 @@ public class ApController implements Initializable {
 
     }
 
-    //terminate thread
-    //handle case when query returns nothing
 
 
 

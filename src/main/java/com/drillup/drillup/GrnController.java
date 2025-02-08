@@ -67,11 +67,15 @@ public class GrnController {
             searchStage.initOwner(mainPane.getScene().getWindow());
             searchStage.setResizable(false);
             searchStage.initModality(Modality.APPLICATION_MODAL);
+            SearchController searchController = fxmlLoader.getController();
+            searchController.setParams("PO","Document No","Vendor",db);
             searchStage.showAndWait();
         }
         catch (IOException e) {
+            e.printStackTrace();
             showError("Error loading search screen"+e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             showError("Error loading search screen"+e.getMessage());
         }
 

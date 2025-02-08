@@ -4,10 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -24,6 +21,9 @@ public class ShippingController {
 
     @FXML
     private Label glEntry;
+
+    @FXML
+    private Button searchButton;
 
     @FXML
     private Pane mainPane;
@@ -53,6 +53,7 @@ public class ShippingController {
 
     @FXML
     void searchScreen(ActionEvent event) {
+        searchButton.setDisable(true);
         FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("searchForm.fxml"));
         Stage searchStage = new Stage();
         searchStage.initOwner(mainPane.getScene().getWindow());
@@ -63,7 +64,14 @@ public class ShippingController {
             searchStage.initOwner(mainPane.getScene().getWindow());
             searchStage.setResizable(false);
             searchStage.initModality(Modality.APPLICATION_MODAL);
+            SearchController searchController = fxmlLoader.getController();
+            searchController.setParams("OE","Document No","Customer",db);
             searchStage.showAndWait();
+            while(!searchStage.isShowing()) {
+
+                searchButton.setDisable(false);
+                showNotification(searchController.getResult());
+            }
         }
         catch (IOException e) {
             showError("Error loading search screen" + e.getMessage());
