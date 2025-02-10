@@ -15,6 +15,7 @@ public class DrillUp extends Application {
         stage.setTitle("Drill Up");
         stage.setResizable(false);
         stage.setScene(scene);
+        stage.getIcons().add(new javafx.scene.image.Image("file:src/main/resources/com/mycrm/mycrm/search Icon.png"));
         stage.show();
     }
 

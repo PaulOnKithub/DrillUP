@@ -1,6 +1,6 @@
 package com.drillup.drillup;
 
-public record OperationsModuleRecord(String id, String entity, Float amount) {
+public record OperationsModuleRecord(Long uniq,String id, String entity, Float amount) {
 
     @Override
     public String toString() {
@@ -17,6 +17,10 @@ public record OperationsModuleRecord(String id, String entity, Float amount) {
 
     public Float getAmount() {
         return amount;
+    }
+
+    public Long getUniq() {
+        return uniq;
     }
 
 
