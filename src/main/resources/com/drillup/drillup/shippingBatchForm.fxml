@@ -12,8 +12,8 @@
 
 <Pane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="311.0" prefWidth="415.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.ShippingController">
    <children>
-      <TextField fx:id="dnNo" layoutX="180.0" layoutY="62.0" prefHeight="38.0" prefWidth="149.0" styleClass="button" />
-      <Label layoutX="33.0" layoutY="59.0" prefHeight="38.0" prefWidth="127.0" styleClass="button" text="Shipping No :" />
+      <TextField fx:id="dnNo" alignment="TOP_LEFT" editable="false" layoutX="164.0" layoutY="62.0" prefHeight="38.0" prefWidth="165.0" styleClass="button" />
+      <Label layoutX="33.0" layoutY="61.0" prefHeight="38.0" prefWidth="127.0" styleClass="button" text="Shipping No :" />
       <ProgressBar fx:id="progressBar" layoutX="33.0" layoutY="103.0" prefHeight="31.0" prefWidth="296.0" progress="0.0" />
       <Button layoutX="222.0" layoutY="146.0" mnemonicParsing="false" onAction="#retrieveFromDN" prefHeight="40.0" prefWidth="107.0" text="Retrieve" />
       <Button layoutX="33.0" layoutY="146.0" mnemonicParsing="false" onAction="#reset" prefHeight="40.0" prefWidth="107.0" text="Reset" />

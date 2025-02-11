@@ -110,10 +110,10 @@ public class Database {
                     OperationsModuleRecord operationsModuleRecord;
                     if (sourceLedger == "OE") {
 
-                        operationsModuleRecord = new OperationsModuleRecord(rs.getString("SHINUMBER"), rs.getString("BILNAME"),rs.getFloat("SHINETWTX"));
+                        operationsModuleRecord = new OperationsModuleRecord(rs.getLong("SHIUNIQ"), rs.getString("SHINUMBER"), rs.getString("BILNAME"),rs.getFloat("SHINETWTX"));
                         operationsModuleRecords.add(operationsModuleRecord);
                     } else if (sourceLedger == "PO") {
-                        operationsModuleRecord = new OperationsModuleRecord(rs.getString("RCPNUMBER"), rs.getString("VDNAME"),rs.getFloat("DOCTOTAL"));
+                        operationsModuleRecord = new OperationsModuleRecord(rs.getLong("RCPHSEQ"),rs.getString("RCPNUMBER"), rs.getString("VDNAME"),rs.getFloat("DOCTOTAL"));
                         operationsModuleRecords.add(operationsModuleRecord);
                     }
 

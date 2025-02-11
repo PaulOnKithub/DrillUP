@@ -1,5 +1,6 @@
 package com.drillup.drillup;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.IOException;
 
@@ -34,6 +36,10 @@ public class ShippingController {
     private final String sourceLedger="OE";
 
     Database db;
+
+    private String docNumber;
+
+    private long docUniq;
 
     void showNotification(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -67,7 +73,12 @@ public class ShippingController {
             searchController.setParams("OE","Document No","Customer",db);
             searchStage.showAndWait();
             if(!searchStage.isShowing()) {
-                showNotification(searchController.getResult());
+                Pair<Long, String> result = searchController.getResult();
+                if(result!=null) {
+                    docUniq = result.getKey();
+                    docNumber = result.getValue();
+                    dnNo.setText(docNumber);
+                }
             }
         }
         catch (IOException e) {
@@ -80,6 +91,7 @@ public class ShippingController {
 
     public void setDb(Database db) {
         this.db = db;
+        docUniq=0;
     }
 
     @FXML
@@ -96,11 +108,55 @@ public class ShippingController {
 
     @FXML
     void reset(ActionEvent event) {
+        dnNo.setText("");
+        glBatch.setText("");
+        glEntry.setText("");
+        docUniq=0;
 
     }
 
     @FXML
     void retrieveFromDN(ActionEvent event) {
+        if(docUniq==0) {
+            showNotification("Please select a document before proceeding to retrive from GL");
+            return;
+        }
+
+        Task<Pair<Integer,Integer>> task=new Task<Pair<Integer, Integer>>() {
+            @Override
+            protected Pair<Integer, Integer> call() throws Exception {
+                return db.retrieveGLInfo(sourceLedger,docUniq);
+            }
+        };
+
+        task.setOnSucceeded(e->{
+            Pair<Integer,Integer> glInfo = task.getValue();
+            if (glInfo.getKey()==0) {
+                showNotification("No data found");
+                progressBar.setProgress(0);
+                return;
+            } else {
+                glBatch.setText(glInfo.getKey().toString());
+                glEntry.setText(glInfo.getValue().toString());
+                progressBar.setProgress(0);
+            }
+        });
+
+        task.setOnFailed(e->{
+            showError("Error retrieving GL info"+task.getException().getMessage());
+            progressBar.setProgress(0);
+        });
+
+        task.setOnRunning(
+                e-> {
+                    progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+                }
+        );
+
+        Thread thread=new Thread(task);
+        thread.start();
+
+
 
     }
 

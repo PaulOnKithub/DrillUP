@@ -9,6 +9,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -32,6 +33,10 @@ public class SearchController implements Initializable {
     private TextField searchParam2;
 
     private Database db;
+
+    private long docUniq;
+
+    private String docNumber;
 
     String searchID;
     String searchModule;
@@ -93,14 +98,12 @@ public class SearchController implements Initializable {
         if(event.getClickCount()==2){
             OperationsModuleRecord record = resultsBox.getSelectionModel().getSelectedItem();
             if(record!=null){
-                String documentID = record.getId();
+                docNumber = record.getId();
+                docUniq=record.getUniq();
             }
+            exitSearch(null);
         }
 
-    }
-
-    @FXML
-    void selectEntry(ActionEvent event) {
 
     }
 
@@ -112,7 +115,8 @@ public class SearchController implements Initializable {
 
     }
 
-    public String getResult() {
-        return "Result";
+    public Pair<Long,String> getResult() {
+        return new Pair<>(docUniq,docNumber);
+
     }
 }
