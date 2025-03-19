@@ -180,7 +180,13 @@
                 <version>1.0.23</version>
                 <configuration>
                     <mainClass>com.drillup.drillup.DrillUp</mainClass>
+                    <bundlesList>
+                        <list>com.microsoft.sqlserver.jdbc.SQLServerDriver</list>
+                        <list>com.microsoft.sqlserver.jdbc.SQLServerResource</list>
+                    </bundlesList>
                     <reflectionList>
+                        <list>com.microsoft.sqlserver.jdbc.SQLServerDriver</list>
+                        <list>com.microsoft.sqlserver.jdbc.SQLServerResource</list>
                         <list>com.drillup.drillup.MainController</list>
                     </reflectionList>
                     <nativeImageArgs>
@@ -188,6 +194,8 @@
                         <arg>--enable-http</arg>
                         <arg>--enable-https</arg>
                         <arg>--initialize-at-run-time=com.sun.management.internal.OperatingSystemImpl</arg>
+                        <arg>--initialize-at-run-time=com.microsoft.sqlserver.jdbc.SQLServerDriver</arg>
+                        <arg>--initialize-at-run-time=com.microsoft.sqlserver.jdbc.SQLServerResource</arg>
                         <arg>-H:+ReportUnsupportedElementsAtRuntime</arg>
                     </nativeImageArgs>
                     <linkerArgs>

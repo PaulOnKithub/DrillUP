@@ -55,8 +55,9 @@ public class Database {
                 }
             }
             scanner.close();
-            String connectionUrl = String.format("jdbc:sqlserver://%s:1433;databaseName=%s;encrypt=false;trustServerCertificate=true",
+            String connectionUrl = String.format("jdbc:sqlserver://%s:%s;databaseName=%s;encrypt=false;trustServerCertificate=true",
                     connectionParams.get("SERVER NAME"),
+                    connectionParams.get("PORT"),
                     connectionParams.get("DATABASE"));
             DriverManager.registerDriver(new com.microsoft.sqlserver.jdbc.SQLServerDriver());
             conn = DriverManager.getConnection(connectionUrl,connectionParams.get("USER"),connectionParams.get("PASSWORD"));
