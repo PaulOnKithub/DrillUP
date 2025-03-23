@@ -192,6 +192,7 @@ public class ApController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        progressBar.setProgress(0.0);
 
 
     }

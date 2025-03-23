@@ -188,6 +188,12 @@
                         <list>com.microsoft.sqlserver.jdbc.SQLServerDriver</list>
                         <list>com.microsoft.sqlserver.jdbc.SQLServerResource</list>
                         <list>com.drillup.drillup.MainController</list>
+                        <list>com.drillup.drillup.ArController</list>
+                        <list>com.drillup.drillup.ApController</list>
+                        <list>com.drillup.drillup.GrnController</list>
+                        <list>com.drillup.drillup.ShippingController</list>
+                        <list>com.drillup.drillup.SearchController</list>
+                        <list>com.drillup.drillup.OperationsModuleRecord</list>
                     </reflectionList>
                     <nativeImageArgs>
                         <arg>--add-modules=jdk.management</arg>
@@ -196,6 +202,7 @@
                         <arg>--initialize-at-run-time=com.sun.management.internal.OperatingSystemImpl</arg>
                         <arg>--initialize-at-run-time=com.microsoft.sqlserver.jdbc.SQLServerDriver</arg>
                         <arg>--initialize-at-run-time=com.microsoft.sqlserver.jdbc.SQLServerResource</arg>
+                        <arg>--initialize-at-build-time=javafx.scene.effect.Blend</arg>
                         <arg>-H:+ReportUnsupportedElementsAtRuntime</arg>
                     </nativeImageArgs>
                     <linkerArgs>

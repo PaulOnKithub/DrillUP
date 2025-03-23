@@ -47,7 +47,7 @@ public class MainController {
 
     @FXML
     void apScreen(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("apBatchForm.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("apBatchForm.fxml"));
         Stage stage=(Stage) mainPane.getScene().getWindow();
         stage.setResizable(false);
         try {
@@ -55,7 +55,8 @@ public class MainController {
             ApController apController = fxmlLoader.getController();
             apController.setDb(db);
         } catch (Exception e) {
-            showError("Error loading AP screen" + e.getMessage());
+            showError("Error loading AP screen" + e.getMessage() + e.getCause());
+
         }
 
 
@@ -63,7 +64,7 @@ public class MainController {
 
     @FXML
     void arScreen(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("arBatchForm.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("arBatchForm.fxml"));
         Stage stage=(Stage) mainPane.getScene().getWindow();
         stage.setResizable(false);
         try {
@@ -72,14 +73,14 @@ public class MainController {
             arController.setDb(db);
             stage.show();
         } catch (Exception e) {
-           showError("Error loading AR screen" + e.getMessage());
+           showError("Error loading AR screen" + e.getMessage() + e.getCause());
         }
 
     }
 
     @FXML
     void oeScreen(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("shippingBatchForm.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("shippingBatchForm.fxml"));
         Stage stage=(Stage) mainPane.getScene().getWindow();
         stage.setResizable(false);
         try {
@@ -87,14 +88,15 @@ public class MainController {
             ShippingController shippingController = fxmlLoader.getController();
             shippingController.setDb(db);
         } catch (Exception e) {
-           showError("Error loading shipping screen" + e.getMessage());
+           //showError("Error loading shipping screen" + e.getMessage() + e.getCause());
+            e.printStackTrace();
         }
 
     }
 
     @FXML
     void poScreen(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("grnBatchForm.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("grnBatchForm.fxml"));
         Stage stage=(Stage) mainPane.getScene().getWindow();
         stage.setResizable(false);
 
@@ -103,7 +105,8 @@ public class MainController {
             GrnController grnController = fxmlLoader.getController();
             grnController.setDb(db);
         } catch (Exception e) {
-            showError("Error loading GRN screen" + e.getMessage());
+            //showError("Error loading GRN screen" + e.getMessage() + e.getCause());
+            e.printStackTrace();
         }
 
     }
