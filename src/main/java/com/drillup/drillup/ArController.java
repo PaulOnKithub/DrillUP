@@ -187,6 +187,7 @@ public class ArController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        progressBar.setProgress(0.0);
 
     }
 }

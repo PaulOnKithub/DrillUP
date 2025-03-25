@@ -5,7 +5,6 @@
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.shape.Rectangle?>
 
 <Pane fx:id="arMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="398.0" prefWidth="365.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.ArController">
    <children>
@@ -15,14 +14,13 @@
       <Label layoutX="33.0" layoutY="59.0" prefHeight="38.0" prefWidth="111.0" styleClass="button" text="AR Batch :" />
       <Label layoutX="33.0" layoutY="99.0" prefHeight="38.0" prefWidth="111.0" styleClass="button" text="AR Entry :" />
       <Label layoutX="33.0" layoutY="139.0" prefHeight="38.0" prefWidth="142.0" styleClass="button" text="AR Posting Sequence :" />
-      <ProgressBar fx:id="progressBar" layoutX="33.0" layoutY="186.0" prefHeight="31.0" prefWidth="296.0" progress="0.0" />
+      <ProgressBar fx:id="progressBar" layoutX="33.0" layoutY="186.0" prefHeight="31.0" prefWidth="296.0" />
       <Button fx:id="retrieveButton" layoutX="230.0" layoutY="230.0" mnemonicParsing="false" onAction="#retrieveFromAR" prefHeight="40.0" prefWidth="99.0" text="Retrieve" />
       <Button fx:id="resetButton" layoutX="33.0" layoutY="230.0" mnemonicParsing="false" onAction="#resetAR" prefHeight="40.0" prefWidth="76.0" text="Reset" />
       <Button layoutX="244.0" layoutY="17.0" mnemonicParsing="false" onAction="#backToMainUI" prefHeight="38.0" prefWidth="85.0" text="Back" />
-      <Label layoutX="43.0" layoutY="288.0" prefHeight="38.0" prefWidth="111.0" styleClass="button" text="GL Batch : " />
-      <Label fx:id="glBatch" layoutX="167.0" layoutY="288.0" prefHeight="31.0" prefWidth="127.0" styleClass="button" />
-      <Label layoutX="42.0" layoutY="331.0" prefHeight="38.0" prefWidth="111.0" styleClass="button" text="GL Entry :" />
-      <Label fx:id="glEntry" layoutX="167.0" layoutY="331.0" prefHeight="31.0" prefWidth="127.0" styleClass="button" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="98.0" layoutX="32.0" layoutY="282.0" stroke="DODGERBLUE" strokeType="INSIDE" width="296.0" />
+      <Label layoutX="33.0" layoutY="288.0" prefHeight="38.0" prefWidth="111.0" styleClass="button" text="GL Batch : " />
+      <Label fx:id="glBatch" layoutX="201.0" layoutY="288.0" prefHeight="31.0" prefWidth="127.0" styleClass="button" />
+      <Label layoutX="32.0" layoutY="331.0" prefHeight="38.0" prefWidth="111.0" styleClass="button" text="GL Entry :" />
+      <Label fx:id="glEntry" layoutX="201.0" layoutY="331.0" prefHeight="31.0" prefWidth="127.0" styleClass="button" />
    </children>
 </Pane>

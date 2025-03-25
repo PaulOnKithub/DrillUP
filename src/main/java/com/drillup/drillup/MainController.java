@@ -47,7 +47,7 @@ public class MainController {
 
     @FXML
     void apScreen(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("apBatchForm.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("apBatchForm.fxml"));
         Stage stage=(Stage) mainPane.getScene().getWindow();
         stage.setResizable(false);
         try {
@@ -55,7 +55,8 @@ public class MainController {
             ApController apController = fxmlLoader.getController();
             apController.setDb(db);
         } catch (Exception e) {
-            showError("Error loading AP screen" + e.getMessage());
+            showError("Error loading AP screen" + e.getMessage() + e.getCause());
+
         }
 
 
@@ -63,7 +64,7 @@ public class MainController {
 
     @FXML
     void arScreen(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("arBatchForm.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("arBatchForm.fxml"));
         Stage stage=(Stage) mainPane.getScene().getWindow();
         stage.setResizable(false);
         try {
@@ -72,14 +73,14 @@ public class MainController {
             arController.setDb(db);
             stage.show();
         } catch (Exception e) {
-           showError("Error loading AR screen" + e.getMessage());
+           showError("Error loading AR screen" + e.getMessage() + e.getCause());
         }
 
     }
 
     @FXML
     void oeScreen(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("shippingBatchForm.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("shippingBatchForm.fxml"));
         Stage stage=(Stage) mainPane.getScene().getWindow();
         stage.setResizable(false);
         try {
@@ -87,14 +88,15 @@ public class MainController {
             ShippingController shippingController = fxmlLoader.getController();
             shippingController.setDb(db);
         } catch (Exception e) {
-           showError("Error loading shipping screen" + e.getMessage());
+           //showError("Error loading shipping screen" + e.getMessage() + e.getCause());
+            e.printStackTrace();
         }
 
     }
 
     @FXML
     void poScreen(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(DrillUp.class.getResource("grnBatchForm.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("grnBatchForm.fxml"));
         Stage stage=(Stage) mainPane.getScene().getWindow();
         stage.setResizable(false);
 
@@ -103,7 +105,8 @@ public class MainController {
             GrnController grnController = fxmlLoader.getController();
             grnController.setDb(db);
         } catch (Exception e) {
-            showError("Error loading GRN screen" + e.getMessage());
+            //showError("Error loading GRN screen" + e.getMessage() + e.getCause());
+            e.printStackTrace();
         }
 
     }
@@ -146,6 +149,9 @@ public class MainController {
         TextField serverNameField = new TextField();
         serverNameField.setPromptText("Server Name");
 
+        TextField serverPort= new TextField();
+        serverPort.setPromptText("Port");
+
         TextField userField = new TextField();
         userField.setPromptText("User");
 
@@ -157,12 +163,14 @@ public class MainController {
 
         grid.add(new Label("Server Name:"), 0, 0);
         grid.add(serverNameField, 1, 0);
-        grid.add(new Label("User:"), 0, 1);
-        grid.add(userField, 1, 1);
-        grid.add(new Label("Password:"), 0, 2);
-        grid.add(passwordField, 1, 2);
-        grid.add(new Label("Database:"), 0, 3);
-        grid.add(databaseField, 1, 3);
+        grid.add(new Label("Port :"),0,1);
+        grid.add(serverPort,1,1);
+        grid.add(new Label("User:"), 0, 2);
+        grid.add(userField, 1, 2);
+        grid.add(new Label("Password:"), 0, 3);
+        grid.add(passwordField, 1, 3);
+        grid.add(new Label("Database:"), 0, 4);
+        grid.add(databaseField, 1, 4);
 
         // Enable/Disable connect button depending on whether all fields are filled.
         Node connectButton = dialog.getDialogPane().lookupButton(connectButtonType);
@@ -172,11 +180,13 @@ public class MainController {
             boolean allFieldsFilled = !serverNameField.getText().trim().isEmpty() &&
                     !userField.getText().trim().isEmpty() &&
                     !passwordField.getText().trim().isEmpty() &&
+                    !serverPort.getText().trim().isEmpty() &&
                     !databaseField.getText().trim().isEmpty();
             connectButton.setDisable(!allFieldsFilled);
         };
 
         serverNameField.textProperty().addListener(validationListener);
+        serverPort.textProperty().addListener(validationListener);
         userField.textProperty().addListener(validationListener);
         passwordField.textProperty().addListener(validationListener);
         databaseField.textProperty().addListener(validationListener);
@@ -191,6 +201,7 @@ public class MainController {
             if (dialogButton == connectButtonType) {
                 Map<String, String> connectionParams = new HashMap<>();
                 connectionParams.put("SERVERNAME", serverNameField.getText());
+                connectionParams.put("PORT",serverPort.getText());
                 connectionParams.put("USER", userField.getText());
                 connectionParams.put("PASSWORD", passwordField.getText());
                 connectionParams.put("DATABASE", databaseField.getText());
@@ -209,6 +220,7 @@ public class MainController {
 
                 // Write the connection parameters to the file.
                 writer.println("Server Name: " + connectionParams.get("SERVERNAME"));
+                writer.println("Port: "+connectionParams.get("PORT"));
                 writer.println("User: " + connectionParams.get("USER"));
                 writer.println("Password: " + connectionParams.get("PASSWORD"));
                 writer.println("Database: " + connectionParams.get("DATABASE"));

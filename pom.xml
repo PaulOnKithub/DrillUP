@@ -173,6 +173,45 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>com.gluonhq</groupId>
+                <artifactId>gluonfx-maven-plugin</artifactId>
+                <version>1.0.23</version>
+                <configuration>
+                    <mainClass>com.drillup.drillup.DrillUp</mainClass>
+                    <bundlesList>
+                        <list>com.microsoft.sqlserver.jdbc.SQLServerDriver</list>
+                        <list>com.microsoft.sqlserver.jdbc.SQLServerResource</list>
+                    </bundlesList>
+                    <reflectionList>
+                        <list>com.microsoft.sqlserver.jdbc.SQLServerDriver</list>
+                        <list>com.microsoft.sqlserver.jdbc.SQLServerResource</list>
+                        <list>com.drillup.drillup.MainController</list>
+                        <list>com.drillup.drillup.ArController</list>
+                        <list>com.drillup.drillup.ApController</list>
+                        <list>com.drillup.drillup.GrnController</list>
+                        <list>com.drillup.drillup.ShippingController</list>
+                        <list>com.drillup.drillup.SearchController</list>
+                        <list>com.drillup.drillup.OperationsModuleRecord</list>
+                    </reflectionList>
+                    <nativeImageArgs>
+                        <arg>--add-modules=jdk.management</arg>
+                        <arg>--enable-http</arg>
+                        <arg>--enable-https</arg>
+                        <arg>--initialize-at-run-time=com.sun.management.internal.OperatingSystemImpl</arg>
+                        <arg>--initialize-at-run-time=com.microsoft.sqlserver.jdbc.SQLServerDriver</arg>
+                        <arg>--initialize-at-run-time=com.microsoft.sqlserver.jdbc.SQLServerResource</arg>
+                        <arg>--initialize-at-build-time=javafx.scene.effect.Blend</arg>
+                        <arg>-H:+ReportUnsupportedElementsAtRuntime</arg>
+                    </nativeImageArgs>
+                    <linkerArgs>
+                        <arg>management_ext.lib</arg>
+                        <arg>psapi.lib</arg>
+                    </linkerArgs>
+
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
