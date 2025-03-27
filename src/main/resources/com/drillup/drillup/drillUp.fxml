@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="255.0" prefWidth="503.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.MainController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="342.0" prefWidth="503.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.MainController">
    <children>
-      <Pane fx:id="mainPane" prefHeight="255.0" prefWidth="522.0" styleClass="root" stylesheets="@style.css">
+      <Pane fx:id="mainPane" prefHeight="328.0" prefWidth="503.0" styleClass="root" stylesheets="@style.css">
          <children>
             <Button layoutX="115.0" layoutY="2.0" mnemonicParsing="false" onAction="#apScreen" prefHeight="63.0" prefWidth="388.0" text="Accounts Payables" />
             <Button layoutX="115.0" layoutY="65.0" mnemonicParsing="false" onAction="#arScreen" prefHeight="63.0" prefWidth="388.0" text="Accounts Receivables" />
@@ -32,6 +33,8 @@
                   </ImageView>
                </graphic>
             </Button>
+            <Button layoutX="7.0" layoutY="267.0" mnemonicParsing="false" onAction="#linkRct" prefHeight="63.0" prefWidth="178.0" text="Link PO To Invoices" />
+            <ProgressBar fx:id="progress2" layoutX="200.0" layoutY="267.0" prefHeight="18.0" prefWidth="296.0" progress="0.0" />
          </children>
       </Pane>
    </children>

@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 import javafx.util.Pair;
+import kotlin.Triple;
 
 public class Database {
 
@@ -127,5 +128,91 @@ public class Database {
         return operationsModuleRecords;
 
     }
+
+    public long getGLInfo(String batchID,String entryID){
+
+        long glInfo= 0;
+        //connectToDatabase();
+
+        if(isConnected) {
+
+            System.out.println("retrieving----");
+
+            try {
+                String sql = "SELECT DRILLDWNLK FROM GLJEH WHERE BATCHID=? AND BTCHENTRY=? ";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, Integer.parseInt(batchID));
+                stmt.setInt(2, Integer.parseInt(entryID));
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) glInfo = rs.getLong("DRILLDWNLK");
+                return glInfo;
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+
+            }
+        }
+        return 0;
+
+    }
+
+    public  Pair<String,String> retrieveFromPO(Long drillDownLink){
+        Pair<String,String> poInfo = new Pair<>("","");
+        //connectToDatabase();
+        if(isConnected) {
+
+            System.out.println("retrieving----");
+
+            try {
+                String sql = "SELECT RCPNUMBER, INVNUMBER FROM POINVH1 WHERE INVHSEQ = ?";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setLong(1, drillDownLink);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    poInfo = new Pair<>(rs.getString("RCPNUMBER"), rs.getString("INVNUMBER"));
+                }else {
+                    poInfo = new Pair<>("","");
+                }
+                return poInfo;
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return poInfo;
+    }
+
+    public String[] retrieveFromAP(String invNumber){
+
+        String[] apInfo=new String[3];
+        //connectToDatabase();
+
+        if(isConnected) {
+
+            System.out.println("retrieving----");
+
+            try {
+                String sql = "SELECT CNTBTCH, CNTITEM, AMTINVCTOT FROM APIBH WHERE IDINVC= ?";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, invNumber);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    Double total=rs.getDouble("AMTINVCTOT");
+                    int batchNo=rs.getInt("CNTBTCH");
+                    int entryNo=rs.getInt("CNTITEM");
+                    apInfo[0]=String.valueOf(batchNo);
+                    apInfo[1]=String.valueOf(entryNo);
+                    apInfo[2]=String.valueOf(total);
+                }
+                return apInfo;
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return apInfo;
+    }
+
+
 
 }
