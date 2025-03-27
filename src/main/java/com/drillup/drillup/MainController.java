@@ -313,6 +313,54 @@ public class MainController {
 
     }
 
+    @FXML
+    void linkDN(ActionEvent event) {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Files", "*.xlsx", "*.xls"));
+        File selectedFile = fileChooser.showOpenDialog(null);
+        if (selectedFile != null) {
+            // Handle the selected file
+            fileLocation = selectedFile.getAbsolutePath();
+        }
+        Task<Void> task=new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                loadAndUpdateExcel2(fileLocation, (currentRow, totalRows) -> {
+                    updateProgress(currentRow, totalRows);
+                });
+                return null;
+            }
+        };
+
+        progress2.progressProperty().bind(task.progressProperty());
+        task.setOnSucceeded(e -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success");
+            alert.setHeaderText("Drilldown retrieval successful");
+            alert.setContentText("The drilldown values have been successfully retrieved and updated in the file");
+            alert.showAndWait();
+            progress2.progressProperty().unbind();
+            progress2.setProgress(0);
+        });
+
+        task.setOnFailed(e -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Drilldown retrieval failed");
+            alert.setContentText("An error occurred while retrieving the drilldown values"+e.toString());
+            alert.showAndWait();
+            progress2.progressProperty().unbind();
+            progress2.setProgress(0);
+        });
+        System.out.println("Entering thread");
+        new Thread(task).start();
+
+
+    }
+
+
+
     public void loadAndUpdateExcel(String fileLocation, BiConsumer<Integer, Integer> progressCallback){
         try {
             FileInputStream file = new FileInputStream(new File(fileLocation));
@@ -330,7 +378,6 @@ public class MainController {
                 Cell batchCell = row.getCell(0); // Assuming batchID is in the first column
                 Cell entryCell = row.getCell(1); // Assuming entryID is in the second column
 
-
                 if (batchCell == null || entryCell == null) continue;
 
                 //String batchID=String.valueOf(batchCell);
@@ -338,39 +385,29 @@ public class MainController {
                 String batchID = batchCell.getCellType() == CellType.STRING ? batchCell.getStringCellValue() : String.valueOf((int) batchCell.getNumericCellValue());
                 String entryID = entryCell.getCellType() == CellType.STRING ? entryCell.getStringCellValue() : String.valueOf((int) entryCell.getNumericCellValue());
 
-                System.out.println("GL Batch--"+batchID +"Entry ID--"+entryID);
-
-
                 Long rctDrill = db.getGLInfo(batchID,entryID);
+
                 Pair<String, String> rcpInfo = db.retrieveFromPO(rctDrill);
                 String grnNo = rcpInfo.getKey();
                 String invNo = rcpInfo.getValue();
 
-                System.out.println("GRN No--"+grnNo+"INV No--"+invNo);
-
-                String[] apInfo=new String[3];
+                String[] apInfo=new String[4];
                 apInfo= db.retrieveFromAP(invNo);
-                String invBatch=apInfo[0];
-                String invEntry=apInfo[1];
-                String total=apInfo[2];
-
-                System.out.println("Inv Batch--"+invBatch+"Inv Entry--"+invEntry+"Total--"+total);
 
                 // Update the row with new values
-                row.createCell(2).setCellValue(grnNo); // Store Grn in column 3
-                row.createCell(3).setCellValue(invNo); // Store Invoice in column 4
-                //row.createCell(4).setCellValue(invBatch.toString()); // Store Invoice Batch in column 5
-                //row.createCell(5).setCellValue(invEntry.toString()); // Store Invoice entry in column 6
-                //row.createCell(6).setCellValue(total.toString()); // Store Total in column 7
-
+                if(rctDrill>0){
+                    row.createCell(2).setCellValue(grnNo); // Store Grn in column 3
+                    row.createCell(3).setCellValue(invNo); // Store Invoice in column 4
+                    row.createCell(4).setCellValue(apInfo[0]); // Store Invoice Batch in column 5
+                    row.createCell(5).setCellValue(apInfo[1]); // Store Invoice entry in column 6
+                    row.createCell(6).setCellValue(Double.valueOf(apInfo[2]));
+                    row.createCell(7).setCellValue(Double.valueOf(apInfo[3]));
+                }
 
                 // Update the progress bar on the main thread
                 int currentRow = i;
                 Platform.runLater(() -> progressCallback.accept(currentRow, totalRows));
             }
-
-
-
 
             FileOutputStream outFile = new FileOutputStream(new File(fileLocation));
             workbook.write(outFile);
@@ -378,10 +415,61 @@ public class MainController {
             workbook.close();
             db.closeConnection();
 
-            //return true;
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
-            //return false;
+
+        }
+
+    }
+
+    public void loadAndUpdateExcel2(String fileLocation, BiConsumer<Integer, Integer> progressCallback){
+        try {
+            FileInputStream file = new FileInputStream(new File(fileLocation));
+            Workbook workbook = new HSSFWorkbook(file);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            Database db = new Database();
+            db.connectToDatabase();
+            int totalRows = sheet.getLastRowNum();
+
+            for (int i = 0; i <= totalRows; i++) { // Start from the second row
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+
+                Cell batchCell = row.getCell(0); // Assuming batchID is in the first column
+                Cell entryCell = row.getCell(1); // Assuming entryID is in the second column
+
+                if (batchCell == null || entryCell == null) continue;
+
+                String batchID = batchCell.getCellType() == CellType.STRING ? batchCell.getStringCellValue() : String.valueOf((int) batchCell.getNumericCellValue());
+                String entryID = entryCell.getCellType() == CellType.STRING ? entryCell.getStringCellValue() : String.valueOf((int) entryCell.getNumericCellValue());
+
+                Long dnDrill = db.getGLInfo(batchID,entryID);
+
+                Pair<String, String> rcpInfo = db.retrieveFromOE(dnDrill);
+                String grnNo = rcpInfo.getKey();
+                String invNo = rcpInfo.getValue();
+
+
+                // Update the row with new values
+                if(dnDrill>0){
+                    row.createCell(2).setCellValue(grnNo); // Store Grn in column 3
+                    row.createCell(3).setCellValue(invNo); // Store Invoice in column 4
+                }
+
+                // Update the progress bar on the main thread
+                int currentRow = i;
+                Platform.runLater(() -> progressCallback.accept(currentRow, totalRows));
+            }
+
+            FileOutputStream outFile = new FileOutputStream(new File(fileLocation));
+            workbook.write(outFile);
+            outFile.close();
+            workbook.close();
+            db.closeConnection();
+
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
 
         }
 
