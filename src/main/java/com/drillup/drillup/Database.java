@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 import javafx.util.Pair;
+import kotlin.Triple;
 
 public class Database {
 
@@ -127,5 +128,121 @@ public class Database {
         return operationsModuleRecords;
 
     }
+
+    public long getGLInfo(String batchID,String entryID){
+
+        long glInfo= 0;
+        //connectToDatabase();
+
+        if(isConnected) {
+
+            System.out.println("retrieving----");
+
+            try {
+                String sql = "SELECT DRILLDWNLK FROM GLJEH WHERE BATCHID=? AND BTCHENTRY=? ";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, Integer.parseInt(batchID));
+                stmt.setInt(2, Integer.parseInt(entryID));
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) glInfo = rs.getLong("DRILLDWNLK");
+                return glInfo;
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+
+            }
+        }
+        return 0;
+
+    }
+
+    public  Pair<String,String> retrieveFromPO(Long drillDownLink){
+        Pair<String,String> poInfo = new Pair<>("","");
+        //connectToDatabase();
+        if(isConnected) {
+
+            System.out.println("retrieving----");
+            int k=Integer.parseInt(Long.toString(drillDownLink));
+
+            try {
+                String sql = "SELECT RCPNUMBER, INVNUMBER FROM PORCPH1 WHERE RCPHSEQ = ?";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, k);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    poInfo = new Pair<>(rs.getString("RCPNUMBER"), rs.getString("INVNUMBER"));
+                }else {
+                    poInfo = new Pair<>("","");
+                }
+                return poInfo;
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return poInfo;
+    }
+
+    public  Pair<String,String> retrieveFromOE(Long drillDownLink){
+        Pair<String,String> oeInfo = new Pair<>("","");
+        //connectToDatabase();
+        if(isConnected) {
+
+            System.out.println("retrieving----");
+            int k=Integer.parseInt(Long.toString(drillDownLink));
+
+            try {
+                String sql = "SELECT SHINUMBER,ORDNUMBER,LASTINVNUM FROM OESHIH WHERE SHIUNIQ=?";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, k);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    oeInfo = new Pair<>(rs.getString("SHINUMBER"), rs.getString("LASTINVNUM"));
+                }else {
+                    oeInfo = new Pair<>("","");
+                }
+                return oeInfo;
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return oeInfo;
+    }
+
+    public String[] retrieveFromAP(String invNumber){
+
+        String[] apInfo=new String[4];
+        //connectToDatabase();
+
+        if(isConnected) {
+
+            System.out.println("retrieving----");
+
+            try {
+                String sql = "SELECT CNTBTCH, CNTITEM, AMTINVCTOT, EXCHRATEHC FROM APIBH WHERE IDINVC= ?";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, invNumber);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    Double total=rs.getDouble("AMTINVCTOT");
+                    int batchNo=rs.getInt("CNTBTCH");
+                    int entryNo=rs.getInt("CNTITEM");
+                    Double rate=rs.getDouble("EXCHRATEHC");
+                    apInfo[0]=String.valueOf(batchNo);
+                    apInfo[1]=String.valueOf(entryNo);
+                    apInfo[2]=String.valueOf(total);
+                    apInfo[3]=String.valueOf(rate);
+                }
+                return apInfo;
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return apInfo;
+    }
+
+
 
 }

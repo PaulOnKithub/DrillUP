@@ -9,8 +9,10 @@ module com.drillup.drillup {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
-    requires java.sql;
     requires com.microsoft.sqlserver.jdbc;
+    requires org.apache.poi.poi;
+    requires org.apache.logging.log4j;
+    requires java.sql;
 
     opens com.drillup.drillup to javafx.fxml;
     exports com.drillup.drillup;
