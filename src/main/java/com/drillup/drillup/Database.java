@@ -130,13 +130,9 @@ public class Database {
     }
 
     public long getGLInfo(String batchID,String entryID){
-
         long glInfo= 0;
         //connectToDatabase();
-
         if(isConnected) {
-
-            System.out.println("retrieving----");
 
             try {
                 String sql = "SELECT DRILLDWNLK FROM GLJEH WHERE BATCHID=? AND BTCHENTRY=? ";
@@ -149,7 +145,6 @@ public class Database {
 
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
-
             }
         }
         return 0;
@@ -160,10 +155,7 @@ public class Database {
         Pair<String,String> poInfo = new Pair<>("","");
         //connectToDatabase();
         if(isConnected) {
-
-            System.out.println("retrieving----");
             int k=Integer.parseInt(Long.toString(drillDownLink));
-
             try {
                 String sql = "SELECT RCPNUMBER, INVNUMBER FROM PORCPH1 WHERE RCPHSEQ = ?";
                 PreparedStatement stmt = conn.prepareStatement(sql);
@@ -187,8 +179,6 @@ public class Database {
         Pair<String,String> oeInfo = new Pair<>("","");
         //connectToDatabase();
         if(isConnected) {
-
-            System.out.println("retrieving----");
             int k=Integer.parseInt(Long.toString(drillDownLink));
 
             try {
@@ -214,10 +204,7 @@ public class Database {
 
         String[] apInfo=new String[4];
         //connectToDatabase();
-
         if(isConnected) {
-
-            System.out.println("retrieving----");
 
             try {
                 String sql = "SELECT CNTBTCH, CNTITEM, AMTINVCTOT, EXCHRATEHC FROM APIBH WHERE IDINVC= ?";
@@ -242,6 +229,37 @@ public class Database {
         }
         return apInfo;
     }
+
+    public String[] retrieveFromAR(String invNumber){
+
+        String[] arInfo=new String[4];
+        //connectToDatabase();
+        if(isConnected) {
+
+            try {
+                String sql = "SELECT CNTBTCH, CNTITEM, AMTINVCTOT, EXCHRATEHC FROM ARIBH WHERE IDINVC= ?";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, invNumber);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    Double total=rs.getDouble("AMTINVCTOT");
+                    int batchNo=rs.getInt("CNTBTCH");
+                    int entryNo=rs.getInt("CNTITEM");
+                    Double rate=rs.getDouble("EXCHRATEHC");
+                    arInfo[0]=String.valueOf(batchNo);
+                    arInfo[1]=String.valueOf(entryNo);
+                    arInfo[2]=String.valueOf(total);
+                    arInfo[3]=String.valueOf(rate);
+                }
+                return arInfo;
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return arInfo;
+    }
+
 
 
 

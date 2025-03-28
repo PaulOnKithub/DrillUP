@@ -349,6 +349,8 @@ public class MainController {
             alert.setTitle("Error");
             alert.setHeaderText("Drilldown retrieval failed");
             alert.setContentText("An error occurred while retrieving the drilldown values"+e.toString());
+            System.out.println(task.getException().getMessage());
+            System.out.println(task.getException().getCause());
             alert.showAndWait();
             progress2.progressProperty().unbind();
             progress2.setProgress(0);
@@ -450,11 +452,18 @@ public class MainController {
                 String grnNo = rcpInfo.getKey();
                 String invNo = rcpInfo.getValue();
 
+                String[] arInfo=new String[4];
+                arInfo= db.retrieveFromAR(invNo);
+
 
                 // Update the row with new values
-                if(dnDrill>0){
+                if(dnDrill>0 & !(arInfo[2]==null) ){
                     row.createCell(2).setCellValue(grnNo); // Store Grn in column 3
-                    row.createCell(3).setCellValue(invNo); // Store Invoice in column 4
+                    row.createCell(3).setCellValue(invNo);
+                    row.createCell(4).setCellValue(arInfo[0]); // Store Invoice Batch in column 5
+                    row.createCell(5).setCellValue(arInfo[1]); // Store Invoice entry in column 6
+                    row.createCell(6).setCellValue(Double.valueOf(arInfo[2]));
+                    row.createCell(7).setCellValue(Double.valueOf(arInfo[3]));// Store Invoice in column 4
                 }
 
                 // Update the progress bar on the main thread
@@ -480,6 +489,7 @@ public class MainController {
 
     @FXML
     void initialize() {
+        progress2.setProgress(0);
         db = new Database();
         db.connectToDatabase();
         if (!db.isConnected()) {
