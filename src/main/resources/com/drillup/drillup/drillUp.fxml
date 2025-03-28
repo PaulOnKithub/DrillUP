@@ -34,7 +34,7 @@
                </graphic>
             </Button>
             <Button layoutX="7.0" layoutY="267.0" mnemonicParsing="false" onAction="#linkRct" prefHeight="63.0" prefWidth="92.0" text="Link PO" />
-            <ProgressBar fx:id="progress2" layoutX="224.0" layoutY="267.0" prefHeight="63.0" prefWidth="272.0" progress="0.0" />
+            <ProgressBar fx:id="progress2" layoutX="224.0" layoutY="267.0" prefHeight="63.0" prefWidth="272.0" />
             <Button layoutX="110.0" layoutY="267.0" mnemonicParsing="false" onAction="#linkDN" prefHeight="63.0" prefWidth="92.0" text="Link OE" />
          </children>
       </Pane>
