@@ -3,6 +3,7 @@ package com.drillup.drillup;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class DrillUp extends Application {
         stage.setTitle("Drill Up");
         stage.setResizable(false);
         stage.setScene(scene);
-        stage.getIcons().add(new javafx.scene.image.Image("file:src/main/resources/com/mycrm/mycrm/search Icon.png"));
+        stage.getIcons().add(new Image(getClass().getResource("Icon.png").toString()));
         stage.show();
     }
 

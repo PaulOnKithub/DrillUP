@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
@@ -42,6 +43,8 @@ public class MainController {
 
     void showNotification(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Stage alertStage=(Stage) alert.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(new Image(getClass().getResource("Icon.png").toString()));
         alert.setTitle("Information Dialog");
         alert.setHeaderText(null);
         alert.setContentText(message);
@@ -50,6 +53,8 @@ public class MainController {
 
     void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        Stage alertStage=(Stage) alert.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(new Image(getClass().getResource("Icon.png").toString()));
         alert.setTitle("Error Dialog");
         alert.setHeaderText(null);
         alert.setContentText(message);
@@ -114,6 +119,7 @@ public class MainController {
 
         try {
             stage.setScene(new Scene(fxmlLoader.load()));
+            stage.getIcons().add(new Image(getClass().getResource("Icon.png").toString()));
             GrnController grnController = fxmlLoader.getController();
             grnController.setDb(db);
         } catch (Exception e) {
@@ -126,6 +132,8 @@ public class MainController {
     @FXML
     void exit(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Stage alertStage=(Stage) alert.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(new Image(getClass().getResource("Icon.png").toString()));
         alert.setTitle("Exit Confirmation");
         alert.setHeaderText(null);
         alert.setContentText("Are you sure you want to exit?");
@@ -142,6 +150,8 @@ public class MainController {
 
         // Create the custom dialog.
         Dialog<Map<String, String>> dialog = new Dialog<>();
+        Stage alertStage=(Stage) dialog.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(new Image(getClass().getResource("Icon.png").toString()));
         dialog.setTitle("Database Connection Dialog");
         dialog.setHeaderText("Enter Database Connection Parameters");
 
@@ -276,6 +286,9 @@ public class MainController {
         if (selectedFile != null) {
             // Handle the selected file
             fileLocation = selectedFile.getAbsolutePath();
+        }else {
+            showNotification("You have not selected a file for processing");
+            return;
         }
         Task<Void> task=new Task<Void>() {
             @Override
@@ -322,7 +335,11 @@ public class MainController {
         if (selectedFile != null) {
             // Handle the selected file
             fileLocation = selectedFile.getAbsolutePath();
+        }else {
+            showNotification("You have not selected a file for processing");
+            return;
         }
+
         Task<Void> task=new Task<Void>() {
             @Override
             protected Void call() throws Exception {

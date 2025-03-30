@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -67,6 +68,7 @@ public class ShippingController implements Initializable {
         searchStage.initOwner(mainPane.getScene().getWindow());
         try {
             Scene searchScene = new Scene(fxmlLoader.load());
+            searchStage.getIcons().add(new Image(getClass().getResource("Icon.png").toString()));
             searchStage.setScene(searchScene);
             searchStage.alwaysOnTopProperty();
             searchStage.initOwner(mainPane.getScene().getWindow());
