@@ -58,6 +58,66 @@ public class MainController {
         alert.showAndWait();
     }
 
+    Pair<String, String> parseApArDrillDown(String link){
+        // Input validation
+        if (link == null || link.length() != 18) {
+            return new Pair<>("", "");
+        }
+
+        // Check for error codes
+        if (link.equals("000000000000000000") || link.equals("111111111111111111")) {
+            return new Pair<>("", "");
+        }
+
+        try {
+            // Extract sequence length (1st character)
+            int sequenceLength = Character.getNumericValue(link.charAt(0));
+
+            // Extract batch length (2nd character)
+            int batchLength = Character.getNumericValue(link.charAt(1));
+
+            // Validate lengths
+            if (sequenceLength < 0 || batchLength < 0 || sequenceLength > 9 || batchLength > 9) {
+                return new Pair<>("", "");
+            }
+
+            // Extract sequence (starts at position 2)
+            int sequenceStart = 2;
+            int sequenceEnd = sequenceStart + sequenceLength;
+            String sequence = link.substring(sequenceStart, sequenceEnd);
+
+            // Extract batch (starts after sequence)
+            int batchStart = sequenceEnd;
+            int batchEnd = batchStart + batchLength;
+            String batch = link.substring(batchStart, batchEnd);
+
+            // Calculate where entry starts (after leading zeros)
+            // Format: [seqLen][batchLen][sequence][batch][leadingZeros][entry]
+            // Total length is 18, so: 1 + 1 + seqLen + batchLen + leadingZeros + entryLen = 18
+            int currentPosition = 2 + sequenceLength + batchLength;
+
+            // Find the end of leading zeros (look for first non-zero or reach end)
+            int entryStart = currentPosition;
+            while (entryStart < 18 && link.charAt(entryStart) == '0') {
+                entryStart++;
+            }
+
+            // Extract entry (from end of leading zeros to end of string)
+            String entry = "";
+            if (entryStart < 18) {
+                entry = link.substring(entryStart);
+            }
+
+            return new Pair<>(batch, entry);
+
+        } catch (Exception e) {
+            // Handle any parsing errors
+            System.out.println("ERROR PARSING LINK -- "+ e.getMessage());
+            return new Pair<>("", "");
+
+        }
+    }
+
     private void loadAndUpdateLinkAP(String fileLocation, BiConsumer<Integer, Integer> progressCallback) {
         try {
             FileInputStream file = new FileInputStream(new File(fileLocation));
@@ -68,7 +128,7 @@ public class MainController {
             db.connectToDatabase();
             int totalRows = sheet.getLastRowNum();
 
-            for (int i = 0; i <= totalRows; i++) { // Start from the second row
+            for (int i = 1; i <= totalRows; i++) { // Start from the second row
                 Row row = sheet.getRow(i);
                 if (row == null) continue;
 
@@ -80,25 +140,20 @@ public class MainController {
                 String batchID = batchCell.getCellType() == CellType.STRING ? batchCell.getStringCellValue() : String.valueOf((int) batchCell.getNumericCellValue());
                 String entryID = entryCell.getCellType() == CellType.STRING ? entryCell.getStringCellValue() : String.valueOf((int) entryCell.getNumericCellValue());
 
-                Long dnDrill = db.getGLInfo(batchID,entryID);
+                Long drillDwnLink = db.getGLInfo(batchID,entryID);
 
-                Pair<String, String> rcpInfo = db.retrieveFromOE(dnDrill);
-                String grnNo = rcpInfo.getKey();
-                String invNo = rcpInfo.getValue();
+                System.out.println("RETRIVED LINK FOR BATCH NO - "+batchID +"is "+ String.valueOf(drillDwnLink));
+                Pair<String, String> apInfo=parseApArDrillDown(String.valueOf(drillDwnLink));
 
-                String[] arInfo=new String[4];
-                arInfo= db.retrieveFromAR(invNo);
+                String vendorNo="NULL";
 
-
-                // Update the row with new values
-                if(dnDrill>0 & !(arInfo[2]==null) ){
-                    row.createCell(2).setCellValue(grnNo); // Store Grn in column 3
-                    row.createCell(3).setCellValue(invNo);
-                    row.createCell(4).setCellValue(arInfo[0]); // Store Invoice Batch in column 5
-                    row.createCell(5).setCellValue(arInfo[1]); // Store Invoice entry in column 6
-                    row.createCell(6).setCellValue(Double.valueOf(arInfo[2]));
-                    row.createCell(7).setCellValue(Double.valueOf(arInfo[3]));// Store Invoice in column 4
+                if(apInfo.getKey()!=""||apInfo.getKey()!=null){
+                    System.out.println("PARSED BATCH ENTRY NO-"+apInfo.getKey()+"-"+apInfo.getValue());
+                    vendorNo=db.getApInfoFromGlLink(apInfo);
                 }
+
+                 row.createCell(2).setCellValue(vendorNo); // Store Vendor No in column 3
+
 
                 // Update the progress bar on the main thread
                 int currentRow = i;

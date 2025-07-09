@@ -261,6 +261,24 @@ public class Database {
     }
 
 
+    public String getApInfoFromGlLink(Pair<String, String> apInfo) {
+        String vendorNo="";
+        if(isConnected){
+            try{
+                String sql="SELECT IDVEND FROM APOBL WHERE CNTBTCH=? AND CNTITEM=?";
+                PreparedStatement statement=conn.prepareStatement(sql);
+                statement.setLong(1,Long.valueOf(apInfo.getKey()));
+                statement.setLong(2,Long.valueOf(apInfo.getValue()));
 
-
+                var rs=statement.executeQuery();
+                while (rs.next()){
+                    vendorNo=rs.getString("IDVEND");
+                }
+                return vendorNo;
+            } catch (Exception e) {
+                System.out.println("ERROR RETRIEVING VENDOR INFO -- "+ e.getMessage());
+            }
+        }
+        return vendorNo;
+    }
 }
