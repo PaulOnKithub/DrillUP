@@ -389,7 +389,7 @@ public class MainController {
         Task<Void> task=new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                loadAndUpdateExcelLinkAP(fileLocation, (currentRow, totalRows) -> {
+                loadAndUpdateLinkAP(fileLocation, (currentRow, totalRows) -> {
                     updateProgress(currentRow, totalRows);
                 });
                 return null;
@@ -424,7 +424,7 @@ public class MainController {
 
     }
 
-    private void loadAndUpdateExcelLinkAP(String fileLocation, BiConsumer<Integer, Integer> progressCallback) {
+    private void loadAndUpdateLinkAP(String fileLocation, BiConsumer<Integer, Integer> progressCallback) {
         try {
             FileInputStream file = new FileInputStream(new File(fileLocation));
             Workbook workbook = new HSSFWorkbook(file);
