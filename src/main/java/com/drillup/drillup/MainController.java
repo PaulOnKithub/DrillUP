@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -27,8 +26,6 @@ import javafx.util.Pair;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class MainController {
 
@@ -293,7 +290,7 @@ public class MainController {
         Task<Void> task=new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                loadAndUpdateExcel(fileLocation, (currentRow, totalRows) -> {
+                loadAndUpdateLinkPO(fileLocation, (currentRow, totalRows) -> {
                     updateProgress(currentRow, totalRows);
                 });
                 return null;
@@ -343,7 +340,56 @@ public class MainController {
         Task<Void> task=new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                loadAndUpdateExcel2(fileLocation, (currentRow, totalRows) -> {
+                loadAndUpdateLinkOE(fileLocation, (currentRow, totalRows) -> {
+                    updateProgress(currentRow, totalRows);
+                });
+                return null;
+            }
+        };
+
+        progress2.progressProperty().bind(task.progressProperty());
+        task.setOnSucceeded(e -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success");
+            alert.setHeaderText("Drilldown retrieval successful");
+            alert.setContentText("The drilldown values have been successfully retrieved and updated in the file");
+            alert.showAndWait();
+            progress2.progressProperty().unbind();
+            progress2.setProgress(0);
+        });
+
+        task.setOnFailed(e -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Drilldown retrieval failed");
+            alert.setContentText("An error occurred while retrieving the drilldown values"+e.toString());
+            System.out.println(task.getException().getMessage());
+            System.out.println(task.getException().getCause());
+            alert.showAndWait();
+            progress2.progressProperty().unbind();
+            progress2.setProgress(0);
+        });
+        System.out.println("Entering thread");
+        new Thread(task).start();
+    }
+
+    @FXML
+    void linkAP(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Files", "*.xlsx", "*.xls"));
+        File selectedFile = fileChooser.showOpenDialog(null);
+        if (selectedFile != null) {
+            // Handle the selected file
+            fileLocation = selectedFile.getAbsolutePath();
+        }else {
+            showNotification("You have not selected a file for processing");
+            return;
+        }
+
+        Task<Void> task=new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                loadAndUpdateExcelLinkAP(fileLocation, (currentRow, totalRows) -> {
                     updateProgress(currentRow, totalRows);
                 });
                 return null;
@@ -378,9 +424,67 @@ public class MainController {
 
     }
 
+    private void loadAndUpdateExcelLinkAP(String fileLocation, BiConsumer<Integer, Integer> progressCallback) {
+        try {
+            FileInputStream file = new FileInputStream(new File(fileLocation));
+            Workbook workbook = new HSSFWorkbook(file);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            Database db = new Database();
+            db.connectToDatabase();
+            int totalRows = sheet.getLastRowNum();
+
+            for (int i = 0; i <= totalRows; i++) { // Start from the second row
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+
+                Cell batchCell = row.getCell(0); // Assuming batchID is in the first column
+                Cell entryCell = row.getCell(1); // Assuming entryID is in the second column
+
+                if (batchCell == null || entryCell == null) continue;
+
+                String batchID = batchCell.getCellType() == CellType.STRING ? batchCell.getStringCellValue() : String.valueOf((int) batchCell.getNumericCellValue());
+                String entryID = entryCell.getCellType() == CellType.STRING ? entryCell.getStringCellValue() : String.valueOf((int) entryCell.getNumericCellValue());
+
+                Long dnDrill = db.getGLInfo(batchID,entryID);
+
+                Pair<String, String> rcpInfo = db.retrieveFromOE(dnDrill);
+                String grnNo = rcpInfo.getKey();
+                String invNo = rcpInfo.getValue();
+
+                String[] arInfo=new String[4];
+                arInfo= db.retrieveFromAR(invNo);
 
 
-    public void loadAndUpdateExcel(String fileLocation, BiConsumer<Integer, Integer> progressCallback){
+                // Update the row with new values
+                if(dnDrill>0 & !(arInfo[2]==null) ){
+                    row.createCell(2).setCellValue(grnNo); // Store Grn in column 3
+                    row.createCell(3).setCellValue(invNo);
+                    row.createCell(4).setCellValue(arInfo[0]); // Store Invoice Batch in column 5
+                    row.createCell(5).setCellValue(arInfo[1]); // Store Invoice entry in column 6
+                    row.createCell(6).setCellValue(Double.valueOf(arInfo[2]));
+                    row.createCell(7).setCellValue(Double.valueOf(arInfo[3]));// Store Invoice in column 4
+                }
+
+                // Update the progress bar on the main thread
+                int currentRow = i;
+                Platform.runLater(() -> progressCallback.accept(currentRow, totalRows));
+            }
+
+            FileOutputStream outFile = new FileOutputStream(new File(fileLocation));
+            workbook.write(outFile);
+            outFile.close();
+            workbook.close();
+            db.closeConnection();
+
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+
+        }
+
+    }
+
+    public void loadAndUpdateLinkPO(String fileLocation, BiConsumer<Integer, Integer> progressCallback){
         try {
             FileInputStream file = new FileInputStream(new File(fileLocation));
             Workbook workbook = new HSSFWorkbook(file);
@@ -441,7 +545,7 @@ public class MainController {
 
     }
 
-    public void loadAndUpdateExcel2(String fileLocation, BiConsumer<Integer, Integer> progressCallback){
+    public void loadAndUpdateLinkOE(String fileLocation, BiConsumer<Integer, Integer> progressCallback){
         try {
             FileInputStream file = new FileInputStream(new File(fileLocation));
             Workbook workbook = new HSSFWorkbook(file);
@@ -500,9 +604,6 @@ public class MainController {
         }
 
     }
-
-
-
 
     @FXML
     void initialize() {
