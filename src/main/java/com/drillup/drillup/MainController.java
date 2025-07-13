@@ -10,12 +10,16 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -107,14 +111,9 @@ public class MainController {
             if (entryStart < 18) {
                 entry = link.substring(entryStart);
             }
-
             return new Pair<>(batch, entry);
-
         } catch (Exception e) {
-            // Handle any parsing errors
-            System.out.println("ERROR PARSING LINK -- "+ e.getMessage());
             return new Pair<>("", "");
-
         }
     }
 
@@ -140,21 +139,26 @@ public class MainController {
                 String batchID = batchCell.getCellType() == CellType.STRING ? batchCell.getStringCellValue() : String.valueOf((int) batchCell.getNumericCellValue());
                 String entryID = entryCell.getCellType() == CellType.STRING ? entryCell.getStringCellValue() : String.valueOf((int) entryCell.getNumericCellValue());
 
-                Long drillDwnLink = db.getGLInfo(batchID,entryID);
-
-                System.out.println("RETRIVED LINK FOR BATCH NO - "+batchID +"is "+ String.valueOf(drillDwnLink));
-                Pair<String, String> apInfo=parseApArDrillDown(String.valueOf(drillDwnLink));
-
+               //get a pair of drilllink and source application
+                var linkInfo=db.getGLInfo2(batchID,entryID);
+                if(linkInfo.getKey()==0L) continue;
+                Pair<String, String> apInfo=parseApArDrillDown(String.valueOf(linkInfo.getKey()));
                 String vendorNo="NULL";
-
-                if(apInfo.getKey()!=""||apInfo.getKey()!=null){
-                    System.out.println("PARSED BATCH ENTRY NO-"+apInfo.getKey()+"-"+apInfo.getValue());
-                    vendorNo=db.getApInfoFromGlLink(apInfo);
+                Optional<String[]> returndedValuesFromAp=null;
+                if (apInfo.getKey() != null && !apInfo.getKey().isEmpty()) {
+                    returndedValuesFromAp = db.getApInfoFromGlLink(apInfo, linkInfo.getValue());
                 }
 
-                 row.createCell(2).setCellValue(vendorNo); // Store Vendor No in column 3
-
-
+                //String[] apInfo2= returndedValuesFromAp.get()!=null ? returndedValuesFromAp.get() : null;
+                if (returndedValuesFromAp.isEmpty() || returndedValuesFromAp==null || !returndedValuesFromAp.isPresent()) continue;
+                String[] apInfo2= returndedValuesFromAp.get();
+                if(apInfo2!=null){
+                    row.createCell(2).setCellValue(apInfo2[0]);
+                    row.createCell(3).setCellValue(apInfo2[1]);
+                    row.createCell(4).setCellValue(apInfo2[2]);
+                    row.createCell(5).setCellValue(apInfo2[3]);
+                    row.createCell(6).setCellValue(apInfo2[4]);
+                }
                 // Update the progress bar on the main thread
                 int currentRow = i;
                 Platform.runLater(() -> progressCallback.accept(currentRow, totalRows));
@@ -168,6 +172,7 @@ public class MainController {
 
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
+            System.out.println("ERROR RETRIEVEING --"+e.getMessage());
 
         }
 
@@ -292,6 +297,29 @@ public class MainController {
 
         }
 
+    }
+
+    private void openExcelFile() {
+        File excelFile=new File(fileLocation);
+        if (excelFile.exists()) {
+            if (Desktop.isDesktopSupported()) {
+                new Thread(() -> {
+                    try {
+                        Desktop.getDesktop().open(excelFile);
+                        System.out.println("Excel file opened successfully.");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        // Handle opening error (e.g., show an Alert to the user)
+                        // This needs to be run on the JavaFX Application Thread if it modifies UI
+                        Platform.runLater(() -> {
+                            new Alert(Alert.AlertType.ERROR, "Could not open Excel file.\n" +
+                                    "Please ensure Excel is installed and associated with .xlsx files.\n" +
+                                    "Error: " + e.getMessage());
+                        });
+                    }
+                }).start();
+            }
+        }
     }
 
 
@@ -640,6 +668,7 @@ public class MainController {
             alert.showAndWait();
             progress2.progressProperty().unbind();
             progress2.setProgress(0);
+            openExcelFile();
         });
 
         task.setOnFailed(e -> {
@@ -649,13 +678,13 @@ public class MainController {
             alert.setContentText("An error occurred while retrieving the drilldown values"+e.toString());
             System.out.println(task.getException().getMessage());
             System.out.println(task.getException().getCause());
+            task.getException().printStackTrace();
             alert.showAndWait();
             progress2.progressProperty().unbind();
             progress2.setProgress(0);
         });
         System.out.println("Entering thread");
         new Thread(task).start();
-
 
     }
 

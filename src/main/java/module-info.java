@@ -13,6 +13,7 @@ module com.drillup.drillup {
     requires org.apache.poi.poi;
     requires org.apache.logging.log4j;
     requires java.sql;
+    requires java.desktop;
 
     opens com.drillup.drillup to javafx.fxml;
     exports com.drillup.drillup;

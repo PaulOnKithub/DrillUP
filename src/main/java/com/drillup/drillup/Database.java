@@ -3,10 +3,7 @@ package com.drillup.drillup;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 import javafx.util.Pair;
@@ -60,7 +57,7 @@ public class Database {
                     connectionParams.get("SERVER NAME"),
                     connectionParams.get("PORT"),
                     connectionParams.get("DATABASE"));
-            DriverManager.registerDriver(new com.microsoft.sqlserver.jdbc.SQLServerDriver());
+            DriverManager.registerDriver(new SQLServerDriver());
             conn = DriverManager.getConnection(connectionUrl,connectionParams.get("USER"),connectionParams.get("PASSWORD"));
             if(conn != null) {
                 isConnected = true;
@@ -149,6 +146,25 @@ public class Database {
         }
         return 0;
 
+    }
+
+    public Pair<Long,String> getGLInfo2(String batchID,String entryID){
+        Pair<Long,String> retVal=new Pair<>(0L,"");
+        if(isConnected) {
+
+            try {
+                String sql = "SELECT DRILLDWNLK,SRCETYPE FROM GLJEH WHERE BATCHID=? AND BTCHENTRY=? ";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, Integer.parseInt(batchID));
+                stmt.setInt(2, Integer.parseInt(entryID));
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) retVal = new Pair<>(rs.getLong("DRILLDWNLK"), rs.getString("SRCETYPE"));
+                return retVal;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return retVal;
     }
 
     public  Pair<String,String> retrieveFromPO(Long drillDownLink){
@@ -261,24 +277,49 @@ public class Database {
     }
 
 
-    public String getApInfoFromGlLink(Pair<String, String> apInfo) {
-        String vendorNo="";
-        if(isConnected){
-            try{
-                String sql="SELECT IDVEND FROM APOBL WHERE CNTBTCH=? AND CNTITEM=?";
-                PreparedStatement statement=conn.prepareStatement(sql);
-                statement.setLong(1,Long.valueOf(apInfo.getKey()));
-                statement.setLong(2,Long.valueOf(apInfo.getValue()));
+    public Optional<String[]> getApInfoFromGlLink(Pair<String, String> apInfo, String app) {
+        String[] apInfoRet = null;
 
-                var rs=statement.executeQuery();
-                while (rs.next()){
-                    vendorNo=rs.getString("IDVEND");
+        if(app.equals("IN")|| app.equals("CR") || app.equals("DB")){
+            if(isConnected) {
+                try {
+                    String sql = "SELECT IDVEND,DATEINVC,DATEBUS,AMTINVCTOT,AMTGROSTOT FROM APIBH WHERE CNTBTCH=? AND CNTITEM=?";
+                    PreparedStatement statement = conn.prepareStatement(sql);
+                    statement.setLong(1, Long.valueOf(apInfo.getKey()));
+                    statement.setLong(2, Long.valueOf(apInfo.getValue()));
+                    var rs = statement.executeQuery();
+                    while (rs.next()) {
+                        apInfoRet = new String[]{rs.getString("IDVEND"), rs.getBigDecimal("DATEINVC").toString(),
+                                rs.getBigDecimal("DATEBUS").toString(), rs.getBigDecimal("AMTINVCTOT").toString(),
+                                rs.getBigDecimal("AMTGROSTOT").toString()
+                        };
+                    }
+                    return Optional.ofNullable(apInfoRet);
+                } catch (Exception e) {
+                    System.out.println("ERROR RETRIEVING VENDOR INFO FROM APIBH -- " + e.getMessage());
                 }
-                return vendorNo;
-            } catch (Exception e) {
-                System.out.println("ERROR RETRIEVING VENDOR INFO -- "+ e.getMessage());
             }
-        }
-        return vendorNo;
+            }else if ( app.equals("PY") || app.equals("PI")){
+                if(isConnected){
+                    try{
+                        String sql="SELECT IDVEND,DATERMIT,DATEBUS,AMTRMIT,AMTRMITHC FROM APTCR WHERE CNTBTCH=? AND CNTENTR=?";
+                        PreparedStatement statement=conn.prepareStatement(sql);
+                        statement.setLong(1,Long.valueOf(apInfo.getKey()));
+                        statement.setLong(2,Long.valueOf(apInfo.getValue()));
+                        var rs=statement.executeQuery();
+                        while (rs.next()){
+                            apInfoRet=new String[]{rs.getString("IDVEND"),rs.getBigDecimal("DATERMIT").toString(),
+                                    rs.getBigDecimal("DATEBUS").toString(),rs.getBigDecimal("AMTRMIT").toString(),
+                                    rs.getBigDecimal("AMTRMITHC").toString()
+                            };                        }
+                        return Optional.ofNullable(apInfoRet);
+                    } catch (Exception e) {
+                        System.out.println("ERROR RETRIEVING VENDOR INFO FROM APTCR-- "+ e.getMessage());
+                    }
+                }
+            }
+        return Optional.ofNullable(apInfoRet);
     }
+
+
 }
