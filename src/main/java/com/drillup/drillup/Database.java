@@ -283,7 +283,7 @@ public class Database {
         if(app.equals("IN")|| app.equals("CR") || app.equals("DB")){
             if(isConnected) {
                 try {
-                    String sql = "SELECT IDVEND,DATEINVC,DATEBUS,AMTINVCTOT,AMTGROSTOT FROM APIBH WHERE CNTBTCH=? AND CNTITEM=?";
+                    String sql = "SELECT IDVEND,DATEINVC,DATEBUS,AMTINVCTOT,AMTGROSTOT,IDINVC FROM APIBH WHERE CNTBTCH=? AND CNTITEM=?";
                     PreparedStatement statement = conn.prepareStatement(sql);
                     statement.setLong(1, Long.valueOf(apInfo.getKey()));
                     statement.setLong(2, Long.valueOf(apInfo.getValue()));
@@ -291,7 +291,7 @@ public class Database {
                     while (rs.next()) {
                         apInfoRet = new String[]{rs.getString("IDVEND"), rs.getBigDecimal("DATEINVC").toString(),
                                 rs.getBigDecimal("DATEBUS").toString(), rs.getBigDecimal("AMTINVCTOT").toString(),
-                                rs.getBigDecimal("AMTGROSTOT").toString()
+                                rs.getBigDecimal("AMTGROSTOT").toString(),rs.getString("IDINVC")
                         };
                     }
                     return Optional.ofNullable(apInfoRet);
@@ -302,7 +302,7 @@ public class Database {
             }else if ( app.equals("PY") || app.equals("PI")){
                 if(isConnected){
                     try{
-                        String sql="SELECT IDVEND,DATERMIT,DATEBUS,AMTRMIT,AMTRMITHC FROM APTCR WHERE CNTBTCH=? AND CNTENTR=?";
+                        String sql="SELECT IDVEND,DATERMIT,DATEBUS,AMTRMIT,AMTRMITHC,DOCNBR FROM APTCR WHERE CNTBTCH=? AND CNTENTR=?";
                         PreparedStatement statement=conn.prepareStatement(sql);
                         statement.setLong(1,Long.valueOf(apInfo.getKey()));
                         statement.setLong(2,Long.valueOf(apInfo.getValue()));
@@ -310,7 +310,7 @@ public class Database {
                         while (rs.next()){
                             apInfoRet=new String[]{rs.getString("IDVEND"),rs.getBigDecimal("DATERMIT").toString(),
                                     rs.getBigDecimal("DATEBUS").toString(),rs.getBigDecimal("AMTRMIT").toString(),
-                                    rs.getBigDecimal("AMTRMITHC").toString()
+                                    rs.getBigDecimal("AMTRMITHC").toString(),rs.getString("DOCNBR")
                             };                        }
                         return Optional.ofNullable(apInfoRet);
                     } catch (Exception e) {

@@ -21,6 +21,8 @@ import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -126,6 +128,7 @@ public class MainController {
             Database db = new Database();
             db.connectToDatabase();
             int totalRows = sheet.getLastRowNum();
+            DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
             for (int i = 1; i <= totalRows; i++) { // Start from the second row
                 Row row = sheet.getRow(i);
@@ -154,10 +157,11 @@ public class MainController {
                 String[] apInfo2= returndedValuesFromAp.get();
                 if(apInfo2!=null){
                     row.createCell(2).setCellValue(apInfo2[0]);
-                    row.createCell(3).setCellValue(apInfo2[1]);
-                    row.createCell(4).setCellValue(apInfo2[2]);
+                    row.createCell(3).setCellValue(LocalDate.parse(apInfo2[1], customFormatter));
+                    row.createCell(4).setCellValue(LocalDate.parse(apInfo2[2],customFormatter));
                     row.createCell(5).setCellValue(apInfo2[3]);
                     row.createCell(6).setCellValue(apInfo2[4]);
+                    row.createCell(7).setCellValue(apInfo2[5]);
                 }
                 // Update the progress bar on the main thread
                 int currentRow = i;
