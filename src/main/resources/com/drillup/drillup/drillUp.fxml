@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="342.0" prefWidth="503.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.MainController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="342.0" prefWidth="503.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.drillup.drillup.MainController">
    <children>
       <Pane fx:id="mainPane" prefHeight="328.0" prefWidth="503.0" styleClass="root" stylesheets="@style.css">
          <children>
@@ -15,7 +15,7 @@
             <Button layoutX="115.0" layoutY="65.0" mnemonicParsing="false" onAction="#arScreen" prefHeight="63.0" prefWidth="388.0" text="Accounts Receivables" />
             <Button layoutX="115.0" layoutY="128.0" mnemonicParsing="false" onAction="#poScreen" prefHeight="63.0" prefWidth="388.0" text="Purchase Order GRN" />
             <Button layoutX="115.0" layoutY="192.0" mnemonicParsing="false" onAction="#oeScreen" prefHeight="63.0" prefWidth="388.0" text="Order Entry Shipment" />
-            <Button layoutX="1.0" layoutY="2.0" mnemonicParsing="false" onAction="#drillUpSettings" prefHeight="92.0" prefWidth="110.0">
+            <Button layoutX="1.0" layoutY="2.0" mnemonicParsing="false" onAction="#drillUpSettings" prefHeight="65.0" prefWidth="110.0">
                <graphic>
                   <ImageView fitHeight="63.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -33,10 +33,11 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button layoutY="109.0" mnemonicParsing="false" onAction="#linkRct" prefHeight="38.0" prefWidth="110.0" text="Link PO" />
+            <Button layoutY="75.0" mnemonicParsing="false" onAction="#linkRct" prefHeight="38.0" prefWidth="110.0" text="Link PO" />
             <ProgressBar fx:id="progress2" layoutX="2.0" layoutY="267.0" prefHeight="63.0" prefWidth="401.0" />
-            <Button layoutY="162.0" mnemonicParsing="false" onAction="#linkDN" prefHeight="38.0" prefWidth="110.0" text="Link OE" />
-            <Button layoutX="1.0" layoutY="217.0" mnemonicParsing="false" onAction="#linkAP" prefHeight="38.0" prefWidth="110.0" text="Link AP" />
+            <Button layoutY="122.0" mnemonicParsing="false" onAction="#linkDN" prefHeight="38.0" prefWidth="110.0" text="Link OE" />
+            <Button layoutX="1.0" layoutY="169.0" mnemonicParsing="false" onAction="#linkAP" prefHeight="38.0" prefWidth="110.0" text="Link AP" />
+            <Button layoutX="1.0" layoutY="216.0" mnemonicParsing="false" onAction="#linkAR" prefHeight="38.0" prefWidth="110.0" text="Link AR" />
          </children>
       </Pane>
    </children>

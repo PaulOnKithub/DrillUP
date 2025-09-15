@@ -177,6 +177,71 @@ public class MainController {
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
             System.out.println("ERROR RETRIEVEING --"+e.getMessage());
+            Platform.runLater(()->showError(e.getMessage()));
+
+        }
+
+    }
+
+    private void loadAndUpdateLinkAR(String fileLocation, BiConsumer<Integer, Integer> progressCallback) {
+        try {
+            FileInputStream file = new FileInputStream(new File(fileLocation));
+            Workbook workbook = new HSSFWorkbook(file);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            Database db = new Database();
+            db.connectToDatabase();
+            int totalRows = sheet.getLastRowNum();
+            DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+            for (int i = 1; i <= totalRows; i++) { // Start from the second row
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+
+                Cell batchCell = row.getCell(0); // Assuming batchID is in the first column
+                Cell entryCell = row.getCell(1); // Assuming entryID is in the second column
+
+                if (batchCell == null || entryCell == null) continue;
+
+                String batchID = batchCell.getCellType() == CellType.STRING ? batchCell.getStringCellValue() : String.valueOf((int) batchCell.getNumericCellValue());
+                String entryID = entryCell.getCellType() == CellType.STRING ? entryCell.getStringCellValue() : String.valueOf((int) entryCell.getNumericCellValue());
+
+                //get a pair of drilllink and source application
+                var linkInfo=db.getGLInfo2(batchID,entryID);
+                if(linkInfo.getKey()==0L) continue;
+                Pair<String, String> arInfo=parseApArDrillDown(String.valueOf(linkInfo.getKey()));
+                String customerNo="NULL";
+                Optional<String[]> returndedValuesFromAr=null;
+                if (arInfo.getKey() != null && !arInfo.getKey().isEmpty()) {
+                    returndedValuesFromAr = db.getArInfoFromGlLink(arInfo, linkInfo.getValue());
+                }
+
+                //String[] apInfo2= returndedValuesFromAr.get()!=null ? returndedValuesFromAr.get() : null;
+                if (returndedValuesFromAr.isEmpty() || returndedValuesFromAr==null || !returndedValuesFromAr.isPresent()) continue;
+                String[] arInfo2= returndedValuesFromAr.get();
+                if(arInfo2!=null){
+                    row.createCell(2).setCellValue(arInfo2[0]);
+                    row.createCell(3).setCellValue(LocalDate.parse(arInfo2[1], customFormatter));
+                    row.createCell(4).setCellValue(LocalDate.parse(arInfo2[2],customFormatter));
+                    row.createCell(5).setCellValue(arInfo2[3]);
+                    row.createCell(6).setCellValue(arInfo2[4]);
+                    row.createCell(7).setCellValue(arInfo2[5]);
+                }
+                // Update the progress bar on the main thread
+                int currentRow = i;
+                Platform.runLater(() -> progressCallback.accept(currentRow, totalRows));
+            }
+
+            FileOutputStream outFile = new FileOutputStream(new File(fileLocation));
+            workbook.write(outFile);
+            outFile.close();
+            workbook.close();
+            db.closeConnection();
+
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+            System.out.println("ERROR RETRIEVEING --"+e.getMessage());
+            Platform.runLater(()->showError(e.getMessage()));
 
         }
 
@@ -238,6 +303,7 @@ public class MainController {
 
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
+            Platform.runLater(()->showError(e.getMessage()));
 
         }
 
@@ -298,6 +364,7 @@ public class MainController {
 
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
+            Platform.runLater(()->showError(e.getMessage()));
 
         }
 
@@ -657,6 +724,58 @@ public class MainController {
             @Override
             protected Void call() throws Exception {
                 loadAndUpdateLinkAP(fileLocation, (currentRow, totalRows) -> {
+                    updateProgress(currentRow, totalRows);
+                });
+                return null;
+            }
+        };
+
+        progress2.progressProperty().bind(task.progressProperty());
+        task.setOnSucceeded(e -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success");
+            alert.setHeaderText("Drilldown retrieval successful");
+            alert.setContentText("The drilldown values have been successfully retrieved and updated in the file");
+            alert.showAndWait();
+            progress2.progressProperty().unbind();
+            progress2.setProgress(0);
+            openExcelFile();
+        });
+
+        task.setOnFailed(e -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Drilldown retrieval failed");
+            alert.setContentText("An error occurred while retrieving the drilldown values"+e.toString());
+            System.out.println(task.getException().getMessage());
+            System.out.println(task.getException().getCause());
+            task.getException().printStackTrace();
+            alert.showAndWait();
+            progress2.progressProperty().unbind();
+            progress2.setProgress(0);
+        });
+        System.out.println("Entering thread");
+        new Thread(task).start();
+
+    }
+
+    @FXML
+    void linkAR(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Files", "*.xlsx", "*.xls"));
+        File selectedFile = fileChooser.showOpenDialog(null);
+        if (selectedFile != null) {
+            // Handle the selected file
+            fileLocation = selectedFile.getAbsolutePath();
+        }else {
+            showNotification("You have not selected a file for processing");
+            return;
+        }
+
+        Task<Void> task=new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                loadAndUpdateLinkAR(fileLocation, (currentRow, totalRows) -> {
                     updateProgress(currentRow, totalRows);
                 });
                 return null;

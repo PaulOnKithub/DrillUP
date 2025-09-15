@@ -276,7 +276,6 @@ public class Database {
         return arInfo;
     }
 
-
     public Optional<String[]> getApInfoFromGlLink(Pair<String, String> apInfo, String app) {
         String[] apInfoRet = null;
 
@@ -318,6 +317,50 @@ public class Database {
                     }
                 }
             }
+        return Optional.ofNullable(apInfoRet);
+    }
+
+    public Optional<String[]> getArInfoFromGlLink(Pair<String, String> apInfo, String app) {
+        String[] apInfoRet = null;
+
+        if(app.equals("IN")|| app.equals("CR") || app.equals("DB")){
+            if(isConnected) {
+                try {
+                    String sql = "SELECT IDCUST,DATEINVC,DATEBUS,AMTINVCTOT,AMTGROSHC,IDINVC FROM ARIBH WHERE CNTBTCH=? AND CNTITEM=?";
+                    PreparedStatement statement = conn.prepareStatement(sql);
+                    statement.setLong(1, Long.valueOf(apInfo.getKey()));
+                    statement.setLong(2, Long.valueOf(apInfo.getValue()));
+                    var rs = statement.executeQuery();
+                    while (rs.next()) {
+                        apInfoRet = new String[]{rs.getString("IDCUST"), rs.getBigDecimal("DATEINVC").toString(),
+                                rs.getBigDecimal("DATEBUS").toString(), rs.getBigDecimal("AMTINVCTOT").toString(),
+                                rs.getBigDecimal("AMTGROSHC").toString(),rs.getString("IDINVC")
+                        };
+                    }
+                    return Optional.ofNullable(apInfoRet);
+                } catch (Exception e) {
+                    System.out.println("ERROR RETRIEVING VENDOR INFO FROM APIBH -- " + e.getMessage());
+                }
+            }
+        }else if ( app.equals("PY") || app.equals("PI")){
+            if(isConnected){
+                try{
+                    String sql="SELECT IDCUST,DATERMIT,DATEBUS,AMTRMIT,AMTRMITHC,DOCNBR FROM ARTCR WHERE CNTBTCH=? AND CNTITEM=?";
+                    PreparedStatement statement=conn.prepareStatement(sql);
+                    statement.setLong(1,Long.valueOf(apInfo.getKey()));
+                    statement.setLong(2,Long.valueOf(apInfo.getValue()));
+                    var rs=statement.executeQuery();
+                    while (rs.next()){
+                        apInfoRet=new String[]{rs.getString("IDCUST"),rs.getBigDecimal("DATERMIT").toString(),
+                                rs.getBigDecimal("DATEBUS").toString(),rs.getBigDecimal("AMTRMIT").toString(),
+                                rs.getBigDecimal("AMTRMITHC").toString(),rs.getString("DOCNBR")
+                        };                        }
+                    return Optional.ofNullable(apInfoRet);
+                } catch (Exception e) {
+                    System.out.println("ERROR RETRIEVING VENDOR INFO FROM APTCR-- "+ e.getMessage());
+                }
+            }
+        }
         return Optional.ofNullable(apInfoRet);
     }
 
