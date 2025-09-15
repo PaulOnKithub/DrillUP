@@ -223,8 +223,8 @@ public class MainController {
                     row.createCell(2).setCellValue(arInfo2[0]);
                     //row.createCell(3).setCellValue(LocalDate.parse(arInfo2[1], customFormatter));
                     //row.createCell(4).setCellValue(LocalDate.parse(arInfo2[2],customFormatter));
-                    row.createCell(3,CellType.STRING).setCellValue(LocalDate.parse(arInfo2[1],customFormatter));
-                    row.createCell(4,CellType.STRING).setCellValue(LocalDate.parse(arInfo2[2],customFormatter));
+                    row.createCell(3,CellType.STRING).setCellValue(LocalDate.parse(arInfo2[1],customFormatter).toString());
+                    row.createCell(4,CellType.STRING).setCellValue(LocalDate.parse(arInfo2[2],customFormatter).toString());
                     row.createCell(5).setCellValue(arInfo2[3]);
                     row.createCell(6).setCellValue(arInfo2[4]);
                     row.createCell(7).setCellValue(arInfo2[5]);
