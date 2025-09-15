@@ -410,7 +410,7 @@ public class MainController {
                 String grnNo = rcpInfo.getKey();
                 String invNo = rcpInfo.getValue();
 
-                String[] apInfo=new String[4];
+                String[] apInfo=new String[5];
                 apInfo= db.retrieveFromAP(invNo);
 
                 // Update the row with new values
@@ -421,6 +421,7 @@ public class MainController {
                     row.createCell(5).setCellValue(apInfo[1]); // Store Invoice entry in column 6
                     row.createCell(6).setCellValue(Double.valueOf(apInfo[2]));
                     row.createCell(7).setCellValue(Double.valueOf(apInfo[3]));
+                    row.createCell(8).setCellValue(apInfo[4]);
                 }
 
                 // Update the progress bar on the main thread
@@ -469,7 +470,7 @@ public class MainController {
                 String grnNo = rcpInfo.getKey();
                 String invNo = rcpInfo.getValue();
 
-                String[] arInfo=new String[4];
+                String[] arInfo=new String[5];
                 arInfo= db.retrieveFromAR(invNo);
 
 
@@ -481,6 +482,7 @@ public class MainController {
                     row.createCell(5).setCellValue(arInfo[1]); // Store Invoice entry in column 6
                     row.createCell(6).setCellValue(Double.valueOf(arInfo[2]));
                     row.createCell(7).setCellValue(Double.valueOf(arInfo[3]));// Store Invoice in column 4
+                    row.createCell(8).setCellValue(arInfo[4]);
                 }
 
                 // Update the progress bar on the main thread

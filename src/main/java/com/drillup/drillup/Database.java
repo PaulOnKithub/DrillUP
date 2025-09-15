@@ -202,12 +202,12 @@ public class Database {
 
     public String[] retrieveFromAP(String invNumber){
 
-        String[] apInfo=new String[4];
+        String[] apInfo=new String[5];
         //connectToDatabase();
         if(isConnected) {
 
             try {
-                String sql = "SELECT CNTBTCH, CNTITEM, AMTINVCTOT, EXCHRATEHC FROM APIBH WHERE IDINVC= ?";
+                String sql = "SELECT CNTBTCH, CNTITEM, AMTINVCTOT, EXCHRATEHC, IDVEND FROM APIBH WHERE IDINVC= ?";
                 PreparedStatement stmt = conn.prepareStatement(sql);
                 stmt.setString(1, invNumber);
                 ResultSet rs = stmt.executeQuery();
@@ -216,10 +216,12 @@ public class Database {
                     int batchNo=rs.getInt("CNTBTCH");
                     int entryNo=rs.getInt("CNTITEM");
                     Double rate=rs.getDouble("EXCHRATEHC");
+                    String entity=rs.getString("IDVEND");
                     apInfo[0]=String.valueOf(batchNo);
                     apInfo[1]=String.valueOf(entryNo);
                     apInfo[2]=String.valueOf(total);
                     apInfo[3]=String.valueOf(rate);
+                    apInfo[4]=String.valueOf(entity);
                 }
                 return apInfo;
 
@@ -232,12 +234,12 @@ public class Database {
 
     public String[] retrieveFromAR(String invNumber){
 
-        String[] arInfo=new String[4];
+        String[] arInfo=new String[5];
         //connectToDatabase();
         if(isConnected) {
 
             try {
-                String sql = "SELECT CNTBTCH, CNTITEM, AMTINVCTOT, EXCHRATEHC FROM ARIBH WHERE IDINVC= ?";
+                String sql = "SELECT CNTBTCH, CNTITEM, AMTINVCTOT, EXCHRATEHC,IDCUST FROM ARIBH WHERE IDINVC= ?";
                 PreparedStatement stmt = conn.prepareStatement(sql);
                 stmt.setString(1, invNumber);
                 ResultSet rs = stmt.executeQuery();
@@ -246,10 +248,12 @@ public class Database {
                     int batchNo=rs.getInt("CNTBTCH");
                     int entryNo=rs.getInt("CNTITEM");
                     Double rate=rs.getDouble("EXCHRATEHC");
+                    String custNo=rs.getString("IDCUST");
                     arInfo[0]=String.valueOf(batchNo);
                     arInfo[1]=String.valueOf(entryNo);
                     arInfo[2]=String.valueOf(total);
                     arInfo[3]=String.valueOf(rate);
+                    arInfo[4]=String.valueOf(custNo);
                 }
                 return arInfo;
 

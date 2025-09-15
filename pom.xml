@@ -194,7 +194,7 @@
             <plugin>
                 <groupId>com.gluonhq</groupId>
                 <artifactId>gluonfx-maven-plugin</artifactId>
-                <version>1.0.23</version>
+                <version>1.0.27</version>
                 <configuration>
                     <mainClass>com.drillup.drillup.DrillUp</mainClass>
                     <bundlesList>
