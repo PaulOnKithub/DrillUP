@@ -321,7 +321,7 @@ public class Database {
     }
 
     public Optional<String[]> getArInfoFromGlLink(Pair<String, String> apInfo, String app) {
-        String[] apInfoRet = null;
+        String[] arInfoRet = null;
 
         if(app.equals("IN")|| app.equals("CR") || app.equals("DB")){
             if(isConnected) {
@@ -332,12 +332,12 @@ public class Database {
                     statement.setLong(2, Long.valueOf(apInfo.getValue()));
                     var rs = statement.executeQuery();
                     while (rs.next()) {
-                        apInfoRet = new String[]{rs.getString("IDCUST"), rs.getBigDecimal("DATEINVC").toString(),
+                        arInfoRet = new String[]{rs.getString("IDCUST"), rs.getBigDecimal("DATEINVC").toString(),
                                 rs.getBigDecimal("DATEBUS").toString(), rs.getBigDecimal("AMTINVCTOT").toString(),
                                 rs.getBigDecimal("AMTGROSHC").toString(),rs.getString("IDINVC")
                         };
                     }
-                    return Optional.ofNullable(apInfoRet);
+                    return Optional.ofNullable(arInfoRet);
                 } catch (Exception e) {
                     System.out.println("ERROR RETRIEVING VENDOR INFO FROM APIBH -- " + e.getMessage());
                 }
@@ -351,17 +351,17 @@ public class Database {
                     statement.setLong(2,Long.valueOf(apInfo.getValue()));
                     var rs=statement.executeQuery();
                     while (rs.next()){
-                        apInfoRet=new String[]{rs.getString("IDCUST"),rs.getBigDecimal("DATERMIT").toString(),
+                        arInfoRet=new String[]{rs.getString("IDCUST"),rs.getBigDecimal("DATERMIT").toString(),
                                 rs.getBigDecimal("DATEBUS").toString(),rs.getBigDecimal("AMTRMIT").toString(),
                                 rs.getBigDecimal("AMTRMITHC").toString(),rs.getString("DOCNBR")
                         };                        }
-                    return Optional.ofNullable(apInfoRet);
+                    return Optional.ofNullable(arInfoRet);
                 } catch (Exception e) {
                     System.out.println("ERROR RETRIEVING VENDOR INFO FROM APTCR-- "+ e.getMessage());
                 }
             }
         }
-        return Optional.ofNullable(apInfoRet);
+        return Optional.ofNullable(arInfoRet);
     }
 
 
